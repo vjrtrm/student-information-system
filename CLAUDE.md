@@ -38,7 +38,7 @@ Every feature/module goes **Requirements → Design → Tasks**, each as a Markd
 - Master combined spec: `SIS_Specification.docx` (reference only; don't read unless necessary).
 
 ## Git rule
-**Commit and push to `origin` after every module is completed.** Use `scripts/commit-module.sh "<message>"`. Remote: https://github.com/vjrtrm/student-information-system
+**Commit after a module's IMPLEMENTATION is complete (code written + tests passing)** — not at the spec stage. Use `scripts/commit-module.sh "<message>"`. Pushing is done by the user from their Mac (no GitHub auth in the sandbox), so just make the local commit and tell the user. Remote: https://github.com/vjrtrm/student-information-system
 
 ## Token-saving habits
 - Prefer the small per-module `.md` over the `.docx`.
