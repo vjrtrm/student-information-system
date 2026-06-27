@@ -1,0 +1,29 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Dependencies / build
+/vendor/
+/node_modules/
+/build/
+/dist/
+
+# Env & secrets — never commit
+.env
+.env.*
+*.pem
+*.key
+config/secrets.php
+
+# Logs / temp
+*.log
+/tmp/
+/storage/logs/*
+/uploads/*
+!*/.gitkeep
+
+# Generated
+DOCS_INDEX.md
