@@ -13,7 +13,7 @@ The SIS is built module by module. Each module is specified in three approval-ga
 
 ## Rules
 - Produce only the current stage. Present it, then STOP and ask the user for review + approval. Never start the next stage before approval.
-- Use the templates in `templates/` — fill, don't reinvent. File name: `SIS_M<N>_<Name>_<Stage>.md` at repo root.
+- Use the templates in `templates/` — fill, don't reinvent. File path: `docs/module-<NN>-<name>/SIS_M<N>_<Name>_<Stage>.md`.
 - Honour locked decisions in `CLAUDE.md`. Undecided things go under "Open questions", never silently assumed.
 - After authoring, run the `spec-verifier` subagent for traceability/consistency before showing the user.
 - After a module's three stages are approved (and any code done), commit/push via `scripts/commit-module.sh`.

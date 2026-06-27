@@ -3,10 +3,10 @@
 > Auto-loaded each session. Keep it short. Its job is to stop Claude re-deriving context (= saved tokens). Read the per-module `.md` specs, **not** the large `.docx`, unless a binary/print artifact is explicitly needed.
 
 ## What this project is
-College Student Information System. Web app. Roles: Student, Department Staff, Department Admin (one staff-admin per dept, full CRUD on its data), optional Institution Admin.
+College Student Information System. Web app. Roles: Student, Department Staff, Department Admin (one staff-admin per dept, full CRUD on its data), Institution Admin (cross-department, in v1).
 
 ## Stack (fixed)
-PHP 8.x · MVC · MySQL 5.x (confirm minor — note says 5.4) · Bootstrap 5 · PDO · PHPMailer/SMTP · PhpSpreadsheet · TCPDF. Avoid MySQL-8-only features.
+PHP 8.x · MVC · MySQL 5.7 · Bootstrap 5 · PDO · PHPMailer/SMTP · PhpSpreadsheet · TCPDF. Avoid MySQL-8-only features. File uploads stored locally under storage/uploads/.
 
 ## Locked product decisions
 - Student login = mobile + DOB. Staff/admin = email + password (bcrypt).
@@ -34,8 +34,8 @@ Every feature/module goes **Requirements → Design → Tasks**, each as a Markd
 12. Student Promotion
 
 ## File conventions
-- Specs live at repo root as `SIS_M<N>_<Name>_<Requirements|Design|Tasks>.md`. `docs/` holds any other long-form docs.
-- Master combined spec: `SIS_Specification.docx` (reference only; don't read unless necessary).
+- Per-module specs live under `docs/module-<NN>-<name>/` as `SIS_M<N>_<Name>_<Requirements|Design|Tasks>.md`.
+- Master combined spec: `docs/SIS_Specification.docx` (reference only; don't read unless necessary).
 
 ## Git rule
 **Commit after a module's IMPLEMENTATION is complete (code written + tests passing)** — not at the spec stage. Use `scripts/commit-module.sh "<message>"`. Pushing is done by the user from their Mac (no GitHub auth in the sandbox), so just make the local commit and tell the user. Remote: https://github.com/vjrtrm/student-information-system

@@ -5,7 +5,7 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
 {
   echo "# Docs index (generated)"
   echo
-  for f in SIS_M*_*.md; do
+  for f in docs/module-*/SIS_M*_*.md; do
     [ -e "$f" ] || continue
     title=$(grep -m1 '^# ' "$f" 2>/dev/null | sed 's/^# //')
     echo "- \`$f\` — ${title:-untitled}"

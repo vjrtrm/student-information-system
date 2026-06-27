@@ -1,0 +1,3 @@
+/* Minimal app styles; tap targets >= 44px for accessibility (NFR §4.1) */
+.btn, .nav-link, .form-control { min-height: 44px; }
+.card { border: none; }

@@ -4,8 +4,8 @@ College SIS built module-by-module using an approval-gated spec workflow:
 **Requirements -> Design -> Tasks** (each reviewed & approved before the next).
 
 ## Layout
-- `SIS_M<N>_<Name>_<Stage>.md` — per-module specs (root + mirrored in `docs/`).
-- `SIS_Specification.docx` — combined master reference.
+- `docs/module-<NN>-<name>/SIS_M<N>_<Name>_<Stage>.md` — per-module specs.
+- `docs/SIS_Specification.docx` — combined master reference.
 - `CLAUDE.md` — project context & locked decisions (auto-loaded by Claude Code).
 - `.claude/` — project skill (`sis-spec`), subagents (`spec-author`, `spec-verifier`, `code-reviewer`), hooks & settings.
 - `scripts/commit-module.sh` — commit/push helper, run after each module completes.

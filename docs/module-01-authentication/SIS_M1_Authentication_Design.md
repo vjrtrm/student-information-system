@@ -12,7 +12,7 @@
 
 ## 1. Design goals
 
-Turn the approved requirements into a concrete, buildable design on the SIS stack (PHP 8.x MVC, MySQL 5.x, Bootstrap 5, PDO, PHPMailer). The design specifies the components, data, flows, validation, and security controls needed to satisfy Epics A–D, without yet breaking work into tasks.
+Turn the approved requirements into a concrete, buildable design on the SIS stack (PHP 8.x MVC, MySQL 5.7, Bootstrap 5, PDO, PHPMailer). The design specifies the components, data, flows, validation, and security controls needed to satisfy Epics A–D, without yet breaking work into tasks.
 
 ## 2. Resolved design decisions (from requirements' open questions)
 
@@ -22,8 +22,8 @@ These defaults are applied in this design; flag any you want changed.
 |---|---------------|---------------------------|
 | 1 | Student OTP default | **OFF** by default; controlled by config flag `auth.student_otp_enabled`. |
 | 2 | Timeout / lockout | Inactivity **30 min**; lockout after **5** fails for **15 min** (all config-driven). |
-| 3 | Institution Admin role | Supported but **optional**; role set `student, staff, dept_admin, institution_admin`. If no institution admin exists, all admin actions are department-scoped. |
-| 4 | MySQL version | Targeting **MySQL 5.x**; schema avoids 8.x-only features (no functional indexes, no `CHECK` reliance, no window functions). Confirm exact minor (5.7 recommended). |
+| 3 | Institution Admin role | **In scope for v1**; role set `student, staff, dept_admin, institution_admin`. If no institution admin exists, all admin actions are department-scoped. |
+| 4 | MySQL version | **MySQL 5.7**; schema avoids 8.x-only features (no functional indexes, no `CHECK` reliance, no window functions). Confirmed (5.7). |
 
 ## 3. Component architecture (MVC)
 

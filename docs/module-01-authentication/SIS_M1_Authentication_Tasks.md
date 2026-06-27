@@ -22,7 +22,7 @@ Legend — **Est**: ideal hours · **Dep**: prerequisite task IDs · Priority: P
 
 | ID | Task | Est | Dep | Priority | Done when |
 |----|------|----:|-----|:--:|-----------|
-| M1-T01 | Create DB migrations for `users` auth columns (role, department_id, status, failed_attempts, locked_until, password_hash) | 3 | — | P1 | Migration runs on MySQL 5.x; columns + `users(email)` unique index present |
+| M1-T01 | Create DB migrations for `users` auth columns (role, department_id, status, failed_attempts, locked_until, password_hash) | 3 | — | P1 | Migration runs on MySQL 5.7; columns + `users(email)` unique index present |
 | M1-T02 | Create migration for `students` auth subset (mobile, dob, department_id, status, failed_attempts, locked_until) + `students(mobile)` index | 2 | — | P1 | Migration runs; mobile indexed |
 | M1-T03 | Create migrations for `password_resets`, `login_otps`, `auth_audit_log` (+ indexes) | 3 | — | P1 | Tables created with FKs/indexes per design §4 |
 | M1-T04 | Seed: one institution admin + one dept admin + sample staff/student for testing | 2 | T01–T03 | P1 | Seed script creates working test accounts |
