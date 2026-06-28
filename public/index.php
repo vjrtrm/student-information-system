@@ -24,6 +24,8 @@ use App\Controllers\StudentFormController;
 use App\Controllers\ApprovalController;
 use App\Controllers\RtcController;
 use App\Controllers\NotificationController;
+use App\Controllers\StaffController;
+use App\Controllers\StaffSelfController;
 
 Config::setPath(dirname(__DIR__) . '/config');
 Auth::start();
@@ -157,6 +159,20 @@ $routes = [
     ['GET',  '/notifications',                    [NotificationController::class, 'index'],          ['auth']],
     ['POST', '/notifications/send',               [NotificationController::class, 'send'],           ['auth']],
     ['GET',  '/notifications/errors',             [NotificationController::class, 'errors'],         ['auth']],
+
+    // --- Module 9: Staff Management (static paths first) ---
+    ['GET',  '/staff/create',                     [StaffController::class,     'createForm'],        ['auth']],
+    ['POST', '/staff/create',                     [StaffController::class,     'store'],             ['auth']],
+    ['GET',  '/staff/profile',                    [StaffSelfController::class, 'profileForm'],       ['auth']],
+    ['POST', '/staff/profile',                    [StaffSelfController::class, 'profileUpdate'],     ['auth']],
+    ['GET',  '/staff/change-password',            [StaffSelfController::class, 'changePasswordForm'],['auth']],
+    ['POST', '/staff/change-password',            [StaffSelfController::class, 'changePassword'],    ['auth']],
+    ['GET',  '/staff',                            [StaffController::class,     'index'],             ['auth']],
+    ['GET',  '/staff/{id}/edit',                  [StaffController::class,     'editForm'],          ['auth']],
+    ['POST', '/staff/{id}/edit',                  [StaffController::class,     'update'],            ['auth']],
+    ['POST', '/staff/{id}/toggle-status',         [StaffController::class,     'toggleStatus'],      ['auth']],
+    ['GET',  '/staff/{id}/reset-password',        [StaffController::class,     'resetPasswordForm'], ['auth']],
+    ['POST', '/staff/{id}/reset-password',        [StaffController::class,     'resetPassword'],     ['auth']],
 ];
 
 foreach ($routes as [$m, $path, $handler, $mw]) {

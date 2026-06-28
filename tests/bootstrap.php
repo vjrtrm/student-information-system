@@ -23,7 +23,7 @@ function sis_test_schema(): array
             department_id INTEGER, staff_code TEXT, mobile TEXT,
             status TEXT NOT NULL DEFAULT 'active',
             failed_attempts INTEGER NOT NULL DEFAULT 0, locked_until TEXT,
-            created_at TEXT
+            created_at TEXT, updated_at TEXT
         )",
         "CREATE TABLE students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -221,5 +221,7 @@ function sis_test_schema(): array
             error_message TEXT NOT NULL,
             attempted_at TEXT NOT NULL
         )",
+        // Module 9 — must_change_password column on users
+        "ALTER TABLE users ADD COLUMN must_change_password INTEGER NOT NULL DEFAULT 0",
     ];
 }

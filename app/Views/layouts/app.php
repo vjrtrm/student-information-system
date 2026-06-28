@@ -36,7 +36,8 @@ unset($_SESSION['flash']);
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/dashboard') ? 'active' : '' ?>"
+                       href="/dashboard">Dashboard</a>
                 </li>
 
                 <?php if (Auth::role() === 'student'): ?>
@@ -60,6 +61,13 @@ unset($_SESSION['flash']);
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/notifications') ? 'active' : '' ?>" href="/notifications">Notifications</a>
+                </li>
+                <?php endif; ?>
+
+                <?php if (in_array(Auth::role(), ['dept_admin', 'institution_admin'], true)): ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= (str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/staff') && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/staff/profile') && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/staff/change-password')) ? 'active' : '' ?>"
+                       href="/staff">Staff</a>
                 </li>
                 <?php endif; ?>
 
