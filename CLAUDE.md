@@ -19,19 +19,21 @@ PHP 8.x · MVC · MySQL 5.7 · Bootstrap 5 · PDO · PHPMailer/SMTP · PhpSpread
 ## Mandatory workflow (do not skip)
 Every feature/module goes **Requirements → Design → Tasks**, each as a Markdown file, **each presented for the user's review + explicit approval before the next stage.** Never jump ahead. Use the `sis-spec` project skill templates (`.claude/skills/sis-spec/templates/`) so structure isn't regenerated from scratch.
 
-## Module roadmap (run the 3-stage cycle in this order)
-1. Authentication & Access Control  ← specs + code done (committed)
-2. Master Data & Department Management  ← specs + code done (committed)
-3. Student Onboarding (bulk upload)  ← specs + code done (committed)
-4. Enrolment Number Generation & Approval  ← specs + code done (committed)
-5. Student Information Form (dynamic fields, partial save, submit/lock)  ← specs + code done (committed)
-6. Submission & Edit Approval (Request-to-Change)  ← next
-7. Notifications
-8. Dashboards, Statistics & Personalisation
-9. Staff Management
-10. Field Management
-11. Student Data Grid & Export
-12. Student Promotion
+## Module roadmap — ALL 12 MODULES COMPLETE (specs + code committed)
+1. Authentication & Access Control  ✅
+2. Master Data & Department Management  ✅
+3. Student Onboarding (bulk upload)  ✅
+4. Enrolment Number Generation & Approval  ✅
+5. Student Information Form (dynamic fields, partial save, submit/lock)  ✅
+6. Submission & Edit Approval (Request-to-Change)  ✅
+7. Notifications  ✅
+8. Dashboards, Statistics & Personalisation  ✅
+9. Staff Management  ✅
+10. Field Management  ✅
+11. Student Data Grid & Export  ✅
+12. Student Promotion  ✅
+
+v1 feature-complete. Remaining work is hardening: full-suite test run, UAT, security review, deployment.
 
 ## File conventions
 - Per-module specs live under `docs/module-<NN>-<name>/` as `SIS_M<N>_<Name>_<Requirements|Design|Tasks>.md`.
