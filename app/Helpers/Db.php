@@ -30,6 +30,12 @@ class Db
         return self::$pdo;
     }
 
+    /** Alias for select() — kept for callers that use the longer name. */
+    public static function selectAll(string $sql, array $params = []): array
+    {
+        return self::select($sql, $params);
+    }
+
     /** Convenience: prepared SELECT returning all rows. */
     public static function select(string $sql, array $params = []): array
     {

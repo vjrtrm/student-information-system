@@ -192,4 +192,39 @@ class StudentProfile
         if (in_array($field['type'], ['radio','checkbox'], true)) return $val !== null && $val !== '';
         return $val !== null && trim((string)$val) !== '';
     }
+
+    /**
+     * Apply a pre-validated changeset (from an approved RTC) to the student's profile.
+     * Performs a single batch UPDATE.
+     * Must be called inside the caller's transaction — does NOT open its own.
+     *
+     * @param int   $studentId
+     * @param array $data  field_key => new_value
+     */
+    public static function applyChangeset(int $studentId, array $data): void
+    {
+        if (empty($data)) return;
+
+        foreach (self::JSON_COLUMNS as $col) {
+            if (array_key_exists($col, $data) && is_array($data[$col])) {
+                $data[$col] = json_encode($data[$col]);
+            }
+        }
+
+        $allowed = array_merge(self::SCALAR_COLUMNS, self::JSON_COLUMNS, self::PATH_COLUMNS);
+        $data    = array_intersect_key($data, array_flip($allowed));
+
+        if (empty($data)) return;
+
+        $now        = date('Y-m-d H:i:s');
+        $setClauses = implode(', ', array_map(fn($k) => "`{$k}` = ?", array_keys($data)));
+        $params     = array_values($data);
+        $params[]   = $now;
+        $params[]   = $studentId;
+
+        Db::execute(
+            "UPDATE student_profiles SET {$setClauses}, last_saved_at = ? WHERE student_id = ?",
+            $params
+        );
+    }
 }

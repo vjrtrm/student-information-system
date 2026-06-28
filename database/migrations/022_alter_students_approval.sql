@@ -1,0 +1,3 @@
+ALTER TABLE students
+    ADD COLUMN approval_by INT UNSIGNED NULL,
+    ADD COLUMN approval_at DATETIME NULL;

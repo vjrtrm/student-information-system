@@ -182,5 +182,44 @@ function sis_test_schema(): array
             status TEXT NOT NULL DEFAULT 'active',
             created_at TEXT
         )",
+        // Module 6 — M6 columns on students
+        "ALTER TABLE students ADD COLUMN approval_by INTEGER",
+        "ALTER TABLE students ADD COLUMN approval_at TEXT",
+        // Module 6 — change_requests
+        "CREATE TABLE IF NOT EXISTS change_requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER NOT NULL,
+            department_id INTEGER NOT NULL,
+            initiated_by INTEGER NOT NULL,
+            initiator_type TEXT NOT NULL DEFAULT 'student',
+            reason TEXT NOT NULL DEFAULT '',
+            proposed_changes TEXT NOT NULL DEFAULT '[]',
+            status TEXT NOT NULL DEFAULT 'pending',
+            rejection_reason TEXT,
+            reviewed_by INTEGER,
+            reviewed_at TEXT,
+            created_at TEXT,
+            updated_at TEXT
+        )",
+        // Module 6 — notification_events
+        "CREATE TABLE IF NOT EXISTS notification_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_key TEXT NOT NULL,
+            student_id INTEGER NOT NULL,
+            actor_id INTEGER NOT NULL,
+            recipient_type TEXT NOT NULL,
+            recipient_id INTEGER,
+            change_request_id INTEGER,
+            payload TEXT NOT NULL DEFAULT '{}',
+            sent_at TEXT,
+            created_at TEXT
+        )",
+        // Module 7 — notification_error_log
+        "CREATE TABLE IF NOT EXISTS notification_error_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            notification_event_id INTEGER NOT NULL,
+            error_message TEXT NOT NULL,
+            attempted_at TEXT NOT NULL
+        )",
     ];
 }

@@ -21,6 +21,9 @@ use App\Controllers\OptionListController;
 use App\Controllers\OnboardingController;
 use App\Controllers\EnrolmentController;
 use App\Controllers\StudentFormController;
+use App\Controllers\ApprovalController;
+use App\Controllers\RtcController;
+use App\Controllers\NotificationController;
 
 Config::setPath(dirname(__DIR__) . '/config');
 Auth::start();
@@ -139,6 +142,21 @@ $routes = [
     ['POST', '/student/form/submit',               [StudentFormController::class, 'submit'],    ['auth']],
     ['GET',  '/student/form/view',                 [StudentFormController::class, 'view'],      ['auth']],
     ['GET',  '/student/form/{studentId}/view',     [StudentFormController::class, 'staffView'], ['auth']],
+
+    // --- Module 6: Submission Approval & RTC ---
+    ['GET',  '/approvals',                        [ApprovalController::class, 'index'],             ['auth']],
+    ['POST', '/approvals/{studentId}/approve',    [ApprovalController::class, 'approveSubmission'], ['auth']],
+    ['GET',  '/rtc/history',                      [RtcController::class, 'studentHistory'],         ['auth']],
+    ['GET',  '/rtc/create',                       [RtcController::class, 'createForm'],             ['auth']],
+    ['POST', '/rtc/create',                       [RtcController::class, 'store'],                  ['auth']],
+    ['GET',  '/rtc/{id}',                         [RtcController::class, 'detail'],                 ['auth']],
+    ['POST', '/rtc/{id}/approve',                 [RtcController::class, 'approve'],                ['auth']],
+    ['POST', '/rtc/{id}/reject',                  [RtcController::class, 'reject'],                 ['auth']],
+
+    // --- Module 7: Notifications ---
+    ['GET',  '/notifications',                    [NotificationController::class, 'index'],          ['auth']],
+    ['POST', '/notifications/send',               [NotificationController::class, 'send'],           ['auth']],
+    ['GET',  '/notifications/errors',             [NotificationController::class, 'errors'],         ['auth']],
 ];
 
 foreach ($routes as [$m, $path, $handler, $mw]) {

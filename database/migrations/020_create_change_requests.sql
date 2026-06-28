@@ -1,0 +1,21 @@
+CREATE TABLE change_requests (
+    id              INT NOT NULL AUTO_INCREMENT,
+    student_id      INT NOT NULL,
+    department_id   INT NOT NULL,
+    initiated_by    INT NOT NULL,
+    initiator_type  ENUM('student','staff') NOT NULL,
+    reason          TEXT NOT NULL,
+    proposed_changes JSON NOT NULL,
+    status          ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    rejection_reason TEXT NULL,
+    reviewed_by     INT NULL,
+    reviewed_at     DATETIME NULL,
+    created_at      DATETIME NOT NULL,
+    updated_at      DATETIME NOT NULL,
+    PRIMARY KEY (id),
+    KEY idx_dept_status (department_id, status),
+    KEY idx_student_status (student_id, status),
+    CONSTRAINT fk_cr_student   FOREIGN KEY (student_id)  REFERENCES students(id),
+    CONSTRAINT fk_cr_dept      FOREIGN KEY (department_id) REFERENCES departments(id),
+    CONSTRAINT fk_cr_initiated FOREIGN KEY (initiated_by) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -43,6 +43,9 @@ unset($_SESSION['flash']);
                 <li class="nav-item">
                     <a class="nav-link" href="/student/form">My Form</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/rtc') ? 'active' : '' ?>" href="/rtc/history">My Changes</a>
+                </li>
                 <?php endif; ?>
 
                 <?php if (in_array(Auth::role(), ['staff', 'dept_admin', 'institution_admin'], true)): ?>
@@ -51,6 +54,12 @@ unset($_SESSION['flash']);
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/enrolment">Enrolment Numbers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/approvals') ? 'active' : '' ?>" href="/approvals">Approvals</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/notifications') ? 'active' : '' ?>" href="/notifications">Notifications</a>
                 </li>
                 <?php endif; ?>
 
