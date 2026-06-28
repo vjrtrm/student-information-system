@@ -17,4 +17,9 @@ Procedure:
 5. Keep it to the module's scope only. Do not invent product decisions — if something is undecided, list it under Open Questions.
 6. Return a short summary: file path, main sections, open questions. Do NOT dump the whole document back.
 
+**Cross-module implementation notes** (include in Tasks docs when relevant):
+- Every new DB table must be added to `tests/bootstrap.php` `sis_test_schema()` as `CREATE TABLE IF NOT EXISTS` with the full SQLite-compatible column set.
+- SQL in model methods must avoid MySQL-only functions in any expression that runs against the test SQLite DB — use PHP-side `date()` for timestamps instead of `NOW()`.
+- New columns on existing tables go into a dedicated migration; do not add `IF NOT EXISTS` to `ALTER TABLE ADD COLUMN` (MySQL 8 doesn't support it — migrations run once on a fresh DB).
+
 Never start the next stage. Authoring is not approval.

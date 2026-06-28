@@ -12,7 +12,20 @@
       "Bash(git commit:*)",
       "Bash(git log:*)",
       "Bash(git diff:*)",
-      "Bash(bash scripts/commit-module.sh:*)"
+      "Bash(bash scripts/commit-module.sh:*)",
+      "Bash(./vendor/bin/phpunit*)",
+      "Bash(php database/migrate.php*)",
+      "Bash(composer install*)",
+      "Bash(composer require*)",
+      "Bash(mysql -u root*)",
+      "Bash(git push*)",
+      "Bash(git rm*)",
+      "Bash(git branch*)",
+      "Bash(grep*)",
+      "Bash(find*)",
+      "Bash(ls*)",
+      "Bash(sed*)",
+      "Bash(rm*)"
     ]
   },
   "hooks": {
