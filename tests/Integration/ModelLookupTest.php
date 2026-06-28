@@ -21,6 +21,7 @@ class ModelLookupTest extends TestCase
     public function testStudentLookupByMobile(): void
     {
         $this->seedStudent('9879879870', '2007-10-10');
+        $this->pdo->exec("UPDATE students SET login_enabled = 1 WHERE mobile = '9879879870'");
         $s = Student::findByMobile('9879879870');
         $this->assertNotNull($s);
         $this->assertSame('2007-10-10', $s['dob']);

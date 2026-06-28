@@ -20,10 +20,10 @@ PHP 8.x · MVC · MySQL 5.7 · Bootstrap 5 · PDO · PHPMailer/SMTP · PhpSpread
 Every feature/module goes **Requirements → Design → Tasks**, each as a Markdown file, **each presented for the user's review + explicit approval before the next stage.** Never jump ahead. Use the `sis-spec` project skill templates (`.claude/skills/sis-spec/templates/`) so structure isn't regenerated from scratch.
 
 ## Module roadmap (run the 3-stage cycle in this order)
-1. Authentication & Access Control  ← specs done
-2. Master Data & Department Management
-3. Student Onboarding (bulk upload)
-4. Enrolment Number Generation & Approval
+1. Authentication & Access Control  ← specs + code done
+2. Master Data & Department Management  ← specs + code done
+3. Student Onboarding (bulk upload)  ← specs + code done (verify tests + commit)
+4. Enrolment Number Generation & Approval  ← next
 5. Student Information Form (dynamic fields, partial save, submit/lock)
 6. Submission & Edit Approval (Request-to-Change)
 7. Notifications
@@ -37,8 +37,19 @@ Every feature/module goes **Requirements → Design → Tasks**, each as a Markd
 - Per-module specs live under `docs/module-<NN>-<name>/` as `SIS_M<N>_<Name>_<Requirements|Design|Tasks>.md`.
 - Master combined spec: `docs/SIS_Specification.docx` (reference only; don't read unless necessary).
 
+## Where work happens
+- **Specs (Requirements/Design/Tasks)** are authored in Cowork, approval-gated.
+- **Implementation** is done in **Claude Code** on the user's Mac (real PHP 8 / MySQL 5.7, runs PHPUnit, pushes). The Cowork sandbox has no PHP runtime.
+- Cowork must **WAIT** for the user's "Module N done" confirmation (tests green + pushed from Claude Code) before starting the next module's spec cycle.
+
+## Implement a module in Claude Code
+```
+cd "<project>" && claude
+```
+Then: "Implement Module <N> (<name>) per docs/module-<NN>-<name>/SIS_M<N>_<Name>_Tasks.md, in build order; reuse Module 1 conventions; run ./vendor/bin/phpunit until green; commit via scripts/commit-module.sh; do not start the next module."
+
 ## Git rule
-**Commit after a module's IMPLEMENTATION is complete (code written + tests passing)** — not at the spec stage. Use `scripts/commit-module.sh "<message>"`. Pushing is done by the user from their Mac (no GitHub auth in the sandbox), so just make the local commit and tell the user. Remote: https://github.com/vjrtrm/student-information-system
+**Commit after a module's IMPLEMENTATION is complete (code written + tests passing)** — not at the spec stage. Use `scripts/commit-module.sh "<message>"`. Pushing is done by the user from their Mac. Remote: https://github.com/vjrtrm/student-information-system
 
 ## Token-saving habits
 - Prefer the small per-module `.md` over the `.docx`.
