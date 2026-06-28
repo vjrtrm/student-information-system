@@ -1,0 +1,17 @@
+<?php
+/**
+ * Mail / SMTP configuration.
+ * Copy this file to config/mail.php and fill in your credentials.
+ * config/mail.php is gitignored — never commit live credentials.
+ */
+return [
+    'host'         => 'smtp.example.com',
+    'port'         => 587,
+    'username'     => 'no-reply@college.edu',
+    'password'     => 'your-smtp-password',
+    'encryption'   => 'tls',            // 'tls' | 'ssl'
+    'from_address' => 'no-reply@college.edu',
+    'from_name'    => 'Student Information System',
+    'system_name'  => 'College SIS',    // appears in email subjects
+    'max_per_run'  => 200,              // max events processed per Send Now call
+];
