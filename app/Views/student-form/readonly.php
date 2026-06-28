@@ -123,6 +123,7 @@ function roQual(string $label, mixed $val): void {
       <?php roRow('Nature of Disability', $profile['disability_nature'] ?? null); ?>
       <?php roRow('First Graduate', isset($profile['first_graduate']) ? ($profile['first_graduate'] ? 'Yes' : 'No') : null); ?>
       <?php roRow('Annual Family Income (₹)', isset($profile['annual_family_income']) ? number_format((int)$profile['annual_family_income']) : null); ?>
+      <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Personal Details') continue; roRow(htmlspecialchars($cf['label']), $customData[(int)$cf['id']] ?? null); endforeach; ?>
     </dl>
   </div>
 </div>
@@ -157,6 +158,11 @@ function roQual(string $label, mixed $val): void {
       <?php roRow('PIN Code', $profile['comm_pincode'] ?? null); ?>
     </dl>
     <?php endif; ?>
+    <?php if (!empty($customFields)): ?>
+    <dl class="row mb-0 mt-2">
+      <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Address Details') continue; roRow(htmlspecialchars($cf['label']), $customData[(int)$cf['id']] ?? null); endforeach; ?>
+    </dl>
+    <?php endif; ?>
   </div>
 </div>
 
@@ -185,6 +191,7 @@ function roQual(string $label, mixed $val): void {
         <?php roRow('Guardian Address', $profile['guardian_address'] ?? null); ?>
         <?php roRow('Guardian Email', $profile['guardian_email'] ?? null); ?>
       <?php endif; ?>
+      <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Parent / Guardian Details') continue; roRow(htmlspecialchars($cf['label']), $customData[(int)$cf['id']] ?? null); endforeach; ?>
     </dl>
   </div>
 </div>
@@ -212,6 +219,7 @@ function roQual(string $label, mixed $val): void {
       <?php if (!empty($profile['qual_other_2'])): ?>
         <?php roQual('Other Qualification 2', $profile['qual_other_2']); ?>
       <?php endif; ?>
+      <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Academic Background') continue; roRow(htmlspecialchars($cf['label']), $customData[(int)$cf['id']] ?? null); endforeach; ?>
     </dl>
   </div>
 </div>
@@ -235,6 +243,7 @@ function roQual(string $label, mixed $val): void {
       <?php roDoc('Income Certificate', $profile['income_cert_path'] ?? null); ?>
       <?php roDoc('Nativity Certificate', $profile['nativity_cert_path'] ?? null); ?>
       <?php roDoc('Aadhaar Card Copy', $profile['aadhaar_copy_path'] ?? null); ?>
+      <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Entrance & Admission Details') continue; roRow(htmlspecialchars($cf['label']), $customData[(int)$cf['id']] ?? null); endforeach; ?>
     </dl>
   </div>
 </div>
@@ -253,6 +262,7 @@ function roQual(string $label, mixed $val): void {
       <?php roRow('Scholarship Applied?', isset($profile['scholarship_applied']) ? ($profile['scholarship_applied'] ? 'Yes' : 'No') : null); ?>
       <?php roRow('Scholarship Scheme', $profile['scholarship_scheme'] ?? null); ?>
       <?php roRow('Scholarship Application No.', $profile['scholarship_app_number'] ?? null); ?>
+      <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Bank & Scholarship Details') continue; roRow(htmlspecialchars($cf['label']), $customData[(int)$cf['id']] ?? null); endforeach; ?>
     </dl>
   </div>
 </div>

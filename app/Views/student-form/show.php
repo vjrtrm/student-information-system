@@ -255,6 +255,15 @@ $isLateral = $admType === 'lateral_entry';
               <input type="number" name="annual_family_income" class="form-control" required min="0"
                      value="<?= View::e($profile['annual_family_income'] ?? '') ?>">
             </div>
+            <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Personal Details') continue; $cfKey = 'custom_' . $cf['id']; $cfMode = ($fieldConfig[$cfKey] ?? $cf['mode']); if ($cfMode === 'hidden') continue; $cfValue = htmlspecialchars($customData[(int)$cf['id']] ?? ''); ?>
+            <div class="col-md-4">
+              <label class="form-label"><?= htmlspecialchars($cf['label']) ?><?php if ($cfMode === 'required') echo ' <span class="text-danger">*</span>'; ?></label>
+              <?php if ($cf['field_type'] === 'textarea'): ?><textarea name="<?= $cfKey ?>" class="form-control" rows="3"><?= $cfValue ?></textarea>
+              <?php elseif ($cf['field_type'] === 'select'): ?><?php $cfOpts = json_decode($cf['options'] ?? '[]', true) ?? []; ?><select name="<?= $cfKey ?>" class="form-select"><option value="">-- Select --</option><?php foreach ($cfOpts as $opt): ?><option value="<?= htmlspecialchars($opt) ?>" <?= ($customData[(int)$cf['id']] ?? '') === $opt ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option><?php endforeach; ?></select>
+              <?php else: ?><input type="<?= htmlspecialchars($cf['field_type']) ?>" name="<?= $cfKey ?>" class="form-control" value="<?= $cfValue ?>">
+              <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
           </div>
 
           <div class="text-end mt-3">
@@ -416,6 +425,15 @@ $isLateral = $admType === 'lateral_entry';
               </div>
             </div>
           </div>
+          <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Address Details') continue; $cfKey = 'custom_' . $cf['id']; $cfMode = ($fieldConfig[$cfKey] ?? $cf['mode']); if ($cfMode === 'hidden') continue; $cfValue = htmlspecialchars($customData[(int)$cf['id']] ?? ''); ?>
+          <div class="row g-3 mt-1"><div class="col-md-4">
+            <label class="form-label"><?= htmlspecialchars($cf['label']) ?><?php if ($cfMode === 'required') echo ' <span class="text-danger">*</span>'; ?></label>
+            <?php if ($cf['field_type'] === 'textarea'): ?><textarea name="<?= $cfKey ?>" class="form-control" rows="3"><?= $cfValue ?></textarea>
+            <?php elseif ($cf['field_type'] === 'select'): ?><?php $cfOpts = json_decode($cf['options'] ?? '[]', true) ?? []; ?><select name="<?= $cfKey ?>" class="form-select"><option value="">-- Select --</option><?php foreach ($cfOpts as $opt): ?><option value="<?= htmlspecialchars($opt) ?>" <?= ($customData[(int)$cf['id']] ?? '') === $opt ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option><?php endforeach; ?></select>
+            <?php else: ?><input type="<?= htmlspecialchars($cf['field_type']) ?>" name="<?= $cfKey ?>" class="form-control" value="<?= $cfValue ?>">
+            <?php endif; ?>
+          </div></div>
+          <?php endforeach; ?>
 
           <div class="text-end mt-3">
             <button type="submit" class="btn btn-primary">Save Section 2</button>
@@ -560,6 +578,15 @@ $isLateral = $admType === 'lateral_entry';
               <input type="email" name="guardian_email" class="form-control"
                      value="<?= View::e($profile['guardian_email'] ?? '') ?>">
             </div>
+            <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Parent / Guardian Details') continue; $cfKey = 'custom_' . $cf['id']; $cfMode = ($fieldConfig[$cfKey] ?? $cf['mode']); if ($cfMode === 'hidden') continue; $cfValue = htmlspecialchars($customData[(int)$cf['id']] ?? ''); ?>
+            <div class="col-md-4">
+              <label class="form-label"><?= htmlspecialchars($cf['label']) ?><?php if ($cfMode === 'required') echo ' <span class="text-danger">*</span>'; ?></label>
+              <?php if ($cf['field_type'] === 'textarea'): ?><textarea name="<?= $cfKey ?>" class="form-control" rows="3"><?= $cfValue ?></textarea>
+              <?php elseif ($cf['field_type'] === 'select'): ?><?php $cfOpts = json_decode($cf['options'] ?? '[]', true) ?? []; ?><select name="<?= $cfKey ?>" class="form-select"><option value="">-- Select --</option><?php foreach ($cfOpts as $opt): ?><option value="<?= htmlspecialchars($opt) ?>" <?= ($customData[(int)$cf['id']] ?? '') === $opt ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option><?php endforeach; ?></select>
+              <?php else: ?><input type="<?= htmlspecialchars($cf['field_type']) ?>" name="<?= $cfKey ?>" class="form-control" value="<?= $cfValue ?>">
+              <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
           </div>
 
           <div class="text-end mt-3">
@@ -670,6 +697,15 @@ $isLateral = $admType === 'lateral_entry';
               </div>
             </div>
           </div>
+          <?php endforeach; ?>
+          <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Academic Background') continue; $cfKey = 'custom_' . $cf['id']; $cfMode = ($fieldConfig[$cfKey] ?? $cf['mode']); if ($cfMode === 'hidden') continue; $cfValue = htmlspecialchars($customData[(int)$cf['id']] ?? ''); ?>
+          <div class="row g-3 mt-1"><div class="col-md-4">
+            <label class="form-label"><?= htmlspecialchars($cf['label']) ?><?php if ($cfMode === 'required') echo ' <span class="text-danger">*</span>'; ?></label>
+            <?php if ($cf['field_type'] === 'textarea'): ?><textarea name="<?= $cfKey ?>" class="form-control" rows="3"><?= $cfValue ?></textarea>
+            <?php elseif ($cf['field_type'] === 'select'): ?><?php $cfOpts = json_decode($cf['options'] ?? '[]', true) ?? []; ?><select name="<?= $cfKey ?>" class="form-select"><option value="">-- Select --</option><?php foreach ($cfOpts as $opt): ?><option value="<?= htmlspecialchars($opt) ?>" <?= ($customData[(int)$cf['id']] ?? '') === $opt ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option><?php endforeach; ?></select>
+            <?php else: ?><input type="<?= htmlspecialchars($cf['field_type']) ?>" name="<?= $cfKey ?>" class="form-control" value="<?= $cfValue ?>">
+            <?php endif; ?>
+          </div></div>
           <?php endforeach; ?>
 
           <div class="text-end mt-3">
@@ -819,6 +855,15 @@ $isLateral = $admType === 'lateral_entry';
                      <?= empty($profile['aadhaar_copy_path']) ? 'required' : '' ?>>
               <div class="form-text">PDF/JPEG/PNG, max 2 MB.</div>
             </div>
+            <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Entrance & Admission Details') continue; $cfKey = 'custom_' . $cf['id']; $cfMode = ($fieldConfig[$cfKey] ?? $cf['mode']); if ($cfMode === 'hidden') continue; $cfValue = htmlspecialchars($customData[(int)$cf['id']] ?? ''); ?>
+            <div class="col-md-4">
+              <label class="form-label"><?= htmlspecialchars($cf['label']) ?><?php if ($cfMode === 'required') echo ' <span class="text-danger">*</span>'; ?></label>
+              <?php if ($cf['field_type'] === 'textarea'): ?><textarea name="<?= $cfKey ?>" class="form-control" rows="3"><?= $cfValue ?></textarea>
+              <?php elseif ($cf['field_type'] === 'select'): ?><?php $cfOpts = json_decode($cf['options'] ?? '[]', true) ?? []; ?><select name="<?= $cfKey ?>" class="form-select"><option value="">-- Select --</option><?php foreach ($cfOpts as $opt): ?><option value="<?= htmlspecialchars($opt) ?>" <?= ($customData[(int)$cf['id']] ?? '') === $opt ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option><?php endforeach; ?></select>
+              <?php else: ?><input type="<?= htmlspecialchars($cf['field_type']) ?>" name="<?= $cfKey ?>" class="form-control" value="<?= $cfValue ?>">
+              <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
           </div>
 
           <div class="text-end mt-3">
@@ -915,6 +960,15 @@ $isLateral = $admType === 'lateral_entry';
                 </div>
               </div>
             </div>
+            <?php foreach (($customFields ?? []) as $cf): if ($cf['section'] !== 'Bank & Scholarship Details') continue; $cfKey = 'custom_' . $cf['id']; $cfMode = ($fieldConfig[$cfKey] ?? $cf['mode']); if ($cfMode === 'hidden') continue; $cfValue = htmlspecialchars($customData[(int)$cf['id']] ?? ''); ?>
+            <div class="col-md-4">
+              <label class="form-label"><?= htmlspecialchars($cf['label']) ?><?php if ($cfMode === 'required') echo ' <span class="text-danger">*</span>'; ?></label>
+              <?php if ($cf['field_type'] === 'textarea'): ?><textarea name="<?= $cfKey ?>" class="form-control" rows="3"><?= $cfValue ?></textarea>
+              <?php elseif ($cf['field_type'] === 'select'): ?><?php $cfOpts = json_decode($cf['options'] ?? '[]', true) ?? []; ?><select name="<?= $cfKey ?>" class="form-select"><option value="">-- Select --</option><?php foreach ($cfOpts as $opt): ?><option value="<?= htmlspecialchars($opt) ?>" <?= ($customData[(int)$cf['id']] ?? '') === $opt ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option><?php endforeach; ?></select>
+              <?php else: ?><input type="<?= htmlspecialchars($cf['field_type']) ?>" name="<?= $cfKey ?>" class="form-control" value="<?= $cfValue ?>">
+              <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
           </div>
 
           <div class="text-end mt-3">

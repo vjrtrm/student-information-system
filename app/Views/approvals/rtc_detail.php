@@ -53,8 +53,15 @@
         </thead>
         <tbody>
             <?php foreach ($rtc['proposed_changes'] as $entry): ?>
+                <?php
+                $fieldLabel = $entry['label'] ?? $entry['field_key'];
+                // Resolve custom field labels
+                if (\App\Helpers\FieldRegistry::isCustomKey($entry['field_key'] ?? '')) {
+                    $fieldLabel = ($customFieldLabels[$entry['field_key']] ?? $fieldLabel);
+                }
+                ?>
                 <tr>
-                    <td><?= htmlspecialchars($entry['label'] ?? $entry['field_key']) ?></td>
+                    <td><?= htmlspecialchars($fieldLabel) ?></td>
                     <td class="text-muted">
                         <?php if (!empty($entry['is_file'])): ?>
                             <?php if ($entry['current_value']): ?><a href="/<?= htmlspecialchars($entry['current_value']) ?>" target="_blank">Current file</a><?php else: ?><em>None</em><?php endif; ?>

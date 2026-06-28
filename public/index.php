@@ -26,6 +26,10 @@ use App\Controllers\RtcController;
 use App\Controllers\NotificationController;
 use App\Controllers\StaffController;
 use App\Controllers\StaffSelfController;
+use App\Controllers\FieldConfigController;
+use App\Controllers\CustomFieldController;
+use App\Controllers\StudentGridController;
+use App\Controllers\PromotionController;
 
 Config::setPath(dirname(__DIR__) . '/config');
 Auth::start();
@@ -138,6 +142,21 @@ $routes = [
     ['POST', '/enrolment/batch/{id}/approve-all',      [EnrolmentController::class, 'approveAll'],     ['auth']],
     ['POST', '/enrolment/batch/{id}/approve-selected', [EnrolmentController::class, 'approveSelected'],['auth']],
 
+    // --- Module 12: Student Promotion (static paths before {id} wildcards) ---
+    ['POST', '/promotion/window/toggle',  [PromotionController::class, 'toggleWindow'], ['auth']],
+    ['GET',  '/promotion/create',         [PromotionController::class, 'createForm'],   ['auth']],
+    ['POST', '/promotion/create',         [PromotionController::class, 'store'],        ['auth']],
+    ['GET',  '/promotion/{id}/edit',      [PromotionController::class, 'editForm'],     ['auth']],
+    ['POST', '/promotion/{id}/edit',      [PromotionController::class, 'update'],       ['auth']],
+    ['POST', '/promotion/{id}/approve',   [PromotionController::class, 'approve'],      ['auth']],
+    ['POST', '/promotion/{id}/reject',    [PromotionController::class, 'reject'],       ['auth']],
+    ['GET',  '/promotion/{id}',           [PromotionController::class, 'detail'],       ['auth']],
+    ['GET',  '/promotion',                [PromotionController::class, 'index'],        ['auth']],
+
+    // --- Module 11: Student Data Grid & Export (static paths before wildcard) ---
+    ['GET', '/students/export', [StudentGridController::class, 'export'], ['auth']],
+    ['GET', '/students',        [StudentGridController::class, 'index'],  ['auth']],
+
     // --- Module 5: Student Information Form ---
     ['GET',  '/student/form',                      [StudentFormController::class, 'show'],      ['auth']],
     ['POST', '/student/form/save',                 [StudentFormController::class, 'save'],      ['auth']],
@@ -173,6 +192,20 @@ $routes = [
     ['POST', '/staff/{id}/toggle-status',         [StaffController::class,     'toggleStatus'],      ['auth']],
     ['GET',  '/staff/{id}/reset-password',        [StaffController::class,     'resetPasswordForm'], ['auth']],
     ['POST', '/staff/{id}/reset-password',        [StaffController::class,     'resetPassword'],     ['auth']],
+
+    // --- Module 10: Field Management (static paths BEFORE {param} wildcards) ---
+    ['GET',  '/field-config/my-dept',             [FieldConfigController::class, 'myDept'],           ['auth']],
+    ['GET',  '/field-config/custom',              [CustomFieldController::class, 'index'],            ['auth']],
+    ['GET',  '/field-config/custom/create',       [CustomFieldController::class, 'createForm'],      ['auth']],
+    ['POST', '/field-config/custom/create',       [CustomFieldController::class, 'store'],           ['auth']],
+    ['GET',  '/field-config/custom/{id}/edit',    [CustomFieldController::class, 'editForm'],        ['auth']],
+    ['POST', '/field-config/custom/{id}/edit',    [CustomFieldController::class, 'update'],          ['auth']],
+    ['POST', '/field-config/custom/{id}/toggle',  [CustomFieldController::class, 'toggleStatus'],    ['auth']],
+    ['GET',  '/field-config',                     [FieldConfigController::class, 'index'],           ['auth']],
+    ['POST', '/field-config',                     [FieldConfigController::class, 'saveBulk'],        ['auth']],
+    ['GET',  '/field-config/{deptId}',            [FieldConfigController::class, 'deptView'],        ['auth']],
+    ['POST', '/field-config/{deptId}',            [FieldConfigController::class, 'saveDeptBulk'],    ['auth']],
+    ['POST', '/field-config/{deptId}/reset',      [FieldConfigController::class, 'resetDept'],       ['auth']],
 ];
 
 foreach ($routes as [$m, $path, $handler, $mw]) {

@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Helpers\Db;
+use App\Helpers\FieldRegistry;
 use App\Helpers\FormFieldRules;
 use App\Helpers\MasterAuditLogger;
 
@@ -195,7 +196,7 @@ class StudentProfile
 
     /**
      * Apply a pre-validated changeset (from an approved RTC) to the student's profile.
-     * Performs a single batch UPDATE.
+     * Handles both built-in profile fields and custom fields (custom_{id} keys).
      * Must be called inside the caller's transaction — does NOT open its own.
      *
      * @param int   $studentId
@@ -205,26 +206,52 @@ class StudentProfile
     {
         if (empty($data)) return;
 
-        foreach (self::JSON_COLUMNS as $col) {
-            if (array_key_exists($col, $data) && is_array($data[$col])) {
-                $data[$col] = json_encode($data[$col]);
+        // Split custom vs built-in fields
+        $builtinData = [];
+        $customData  = [];
+        foreach ($data as $key => $value) {
+            if (FieldRegistry::isCustomKey($key)) {
+                $customData[$key] = $value;
+            } else {
+                $builtinData[$key] = $value;
             }
         }
 
-        $allowed = array_merge(self::SCALAR_COLUMNS, self::JSON_COLUMNS, self::PATH_COLUMNS);
-        $data    = array_intersect_key($data, array_flip($allowed));
+        // Apply built-in changes
+        if (!empty($builtinData)) {
+            foreach (self::JSON_COLUMNS as $col) {
+                if (array_key_exists($col, $builtinData) && is_array($builtinData[$col])) {
+                    $builtinData[$col] = json_encode($builtinData[$col]);
+                }
+            }
 
-        if (empty($data)) return;
+            $allowed    = array_merge(self::SCALAR_COLUMNS, self::JSON_COLUMNS, self::PATH_COLUMNS);
+            $builtinData = array_intersect_key($builtinData, array_flip($allowed));
 
-        $now        = date('Y-m-d H:i:s');
-        $setClauses = implode(', ', array_map(fn($k) => "`{$k}` = ?", array_keys($data)));
-        $params     = array_values($data);
-        $params[]   = $now;
-        $params[]   = $studentId;
+            if (!empty($builtinData)) {
+                $now        = date('Y-m-d H:i:s');
+                $setClauses = implode(', ', array_map(fn($k) => "`{$k}` = ?", array_keys($builtinData)));
+                $params     = array_values($builtinData);
+                $params[]   = $now;
+                $params[]   = $studentId;
 
-        Db::execute(
-            "UPDATE student_profiles SET {$setClauses}, last_saved_at = ? WHERE student_id = ?",
-            $params
-        );
+                Db::execute(
+                    "UPDATE student_profiles SET {$setClauses}, last_saved_at = ? WHERE student_id = ?",
+                    $params
+                );
+            }
+        }
+
+        // Apply custom field changes
+        if (!empty($customData)) {
+            $now = date('Y-m-d H:i:s');
+            foreach ($customData as $key => $value) {
+                $cfId = (int)substr($key, 7); // strip 'custom_'
+                Db::execute(
+                    'REPLACE INTO student_custom_data (student_id, custom_field_id, value, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+                    [$studentId, $cfId, (string)$value, $now, $now]
+                );
+            }
+        }
     }
 }

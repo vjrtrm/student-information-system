@@ -70,6 +70,52 @@
         </div>
     <?php endforeach; ?>
 
+    <?php if (!empty($customFields ?? [])): ?>
+        <div class="card mb-3">
+            <div class="card-header py-2 fw-semibold">Custom Fields</div>
+            <div class="card-body p-0">
+                <?php foreach (($customFields ?? []) as $cf): ?>
+                    <?php
+                    $cfKey    = 'custom_' . $cf['id'];
+                    $curVal   = htmlspecialchars($customData[(int)$cf['id']] ?? '');
+                    ?>
+                    <div class="border-bottom p-3">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input field-chk" type="checkbox" id="chk_<?= $cfKey ?>" data-target="row_<?= $cfKey ?>">
+                            <label class="form-check-label fw-semibold" for="chk_<?= $cfKey ?>"><?= htmlspecialchars($cf['label']) ?></label>
+                        </div>
+                        <div id="row_<?= $cfKey ?>" class="row g-2 d-none">
+                            <div class="col-md-5">
+                                <label class="form-label text-muted small">Current value</label>
+                                <input type="text" class="form-control form-control-sm" value="<?= $curVal ?>" readonly>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small">New value</label>
+                                <?php if ($cf['field_type'] === 'textarea'): ?>
+                                    <textarea name="fields[<?= $cfKey ?>]" class="form-control form-control-sm" rows="2"><?= $curVal ?></textarea>
+                                <?php elseif ($cf['field_type'] === 'select'): ?>
+                                    <?php $cfOpts = json_decode($cf['options'] ?? '[]', true) ?? []; ?>
+                                    <select name="fields[<?= $cfKey ?>]" class="form-select form-select-sm">
+                                        <option value="">-- Select --</option>
+                                        <?php foreach ($cfOpts as $opt): ?>
+                                            <option value="<?= htmlspecialchars($opt) ?>" <?= ($customData[(int)$cf['id']] ?? '') === $opt ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php elseif ($cf['field_type'] === 'date'): ?>
+                                    <input type="date" name="fields[<?= $cfKey ?>]" class="form-control form-control-sm" value="<?= $curVal ?>">
+                                <?php elseif ($cf['field_type'] === 'number'): ?>
+                                    <input type="number" name="fields[<?= $cfKey ?>]" class="form-control form-control-sm" value="<?= $curVal ?>">
+                                <?php else: ?>
+                                    <input type="text" name="fields[<?= $cfKey ?>]" class="form-control form-control-sm" value="<?= $curVal ?>">
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if (!empty($fileFields)): ?>
         <div class="card mb-4">
             <div class="card-header py-2 fw-semibold">Documents &amp; Photos</div>

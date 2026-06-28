@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Helpers\Auth;
 use App\Helpers\Db;
+use App\Helpers\FieldConfig;
 use App\Helpers\FormFieldRules;
 use App\Helpers\MasterAuditLogger;
 use App\Helpers\RtcFieldHelper;
@@ -62,10 +63,15 @@ class RtcController extends Controller
             return;
         }
 
-        $profile = StudentProfile::findByStudent($studentId) ?? [];
-        $rules   = FormFieldRules::getApplicableFields($profile, $student);
+        $profile      = StudentProfile::findByStudent($studentId) ?? [];
+        $rules        = FormFieldRules::getApplicableFields($profile, $student);
+        $deptId       = (int)($student['department_id'] ?? 0);
+        $customFields = FieldConfig::resolveCustomFields($deptId);
+        $cdRows       = Db::selectAll('SELECT custom_field_id, value FROM student_custom_data WHERE student_id = ?', [$studentId]);
+        $customData   = [];
+        foreach ($cdRows as $row) { $customData[(int)$row['custom_field_id']] = $row['value']; }
 
-        $this->render('approvals/rtc_form', compact('student', 'profile', 'rules', 'role'));
+        $this->render('approvals/rtc_form', compact('student', 'profile', 'rules', 'role', 'customFields', 'customData'));
     }
 
     // POST /rtc/create
@@ -110,11 +116,17 @@ class RtcController extends Controller
             return;
         }
 
-        $profile  = StudentProfile::findByStudent($studentId) ?? [];
-        $posted   = $_POST['fields'] ?? [];
+        $profile       = StudentProfile::findByStudent($studentId) ?? [];
+        $posted        = $_POST['fields'] ?? [];
+        $deptId        = (int)($student['department_id'] ?? 0);
+        $customFieldsRtc = FieldConfig::resolveCustomFields($deptId);
+        $cdRowsRtc     = Db::selectAll('SELECT custom_field_id, value FROM student_custom_data WHERE student_id = ?', [$studentId]);
+        $customDataRtc = [];
+        foreach ($cdRowsRtc as $row) { $customDataRtc[(int)$row['custom_field_id']] = $row['value']; }
+        $activeCustomKeysRtc = array_map(fn($cf) => 'custom_' . $cf['id'], $customFieldsRtc);
 
         try {
-            $changeset = RtcFieldHelper::buildChangeset($posted, $profile, $student);
+            $changeset = RtcFieldHelper::buildChangeset($posted, $profile, $student, $customDataRtc, $activeCustomKeysRtc);
         } catch (\InvalidArgumentException $e) {
             $changeset = [];
         }
@@ -212,8 +224,12 @@ class RtcController extends Controller
             return;
         }
 
-        $student = Student::find((int)$rtc['student_id']);
-        $this->render('approvals/rtc_detail', compact('rtc', 'student', 'role'));
+        $student      = Student::find((int)$rtc['student_id']);
+        $deptId       = (int)($student['department_id'] ?? 0);
+        $cfRows       = FieldConfig::resolveCustomFields($deptId);
+        $customFieldLabels = [];
+        foreach ($cfRows as $cf) { $customFieldLabels['custom_' . $cf['id']] = $cf['label']; }
+        $this->render('approvals/rtc_detail', compact('rtc', 'student', 'role', 'customFieldLabels'));
     }
 
     // POST /rtc/{id}/approve

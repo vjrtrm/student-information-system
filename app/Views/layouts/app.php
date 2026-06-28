@@ -51,7 +51,12 @@ unset($_SESSION['flash']);
 
                 <?php if (in_array(Auth::role(), ['staff', 'dept_admin', 'institution_admin'], true)): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="/onboarding">Students</a>
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/onboarding') ? 'active' : '' ?>"
+                       href="/onboarding">Students</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/students') ? 'active' : '' ?>"
+                       href="/students">Student Data</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/enrolment">Enrolment Numbers</a>
@@ -62,12 +67,28 @@ unset($_SESSION['flash']);
                 <li class="nav-item">
                     <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/notifications') ? 'active' : '' ?>" href="/notifications">Notifications</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/promotion') ? 'active' : '' ?>"
+                       href="/promotion">Promotion</a>
+                </li>
                 <?php endif; ?>
 
                 <?php if (in_array(Auth::role(), ['dept_admin', 'institution_admin'], true)): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= (str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/staff') && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/staff/profile') && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/staff/change-password')) ? 'active' : '' ?>"
                        href="/staff">Staff</a>
+                </li>
+                <?php endif; ?>
+
+                <?php if (Auth::role() === 'institution_admin'): ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/field-config') ? 'active' : '' ?>"
+                       href="/field-config">Field Config</a>
+                </li>
+                <?php elseif (Auth::role() === 'dept_admin'): ?>
+                <li class="nav-item">
+                    <a class="nav-link <?= str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/field-config') ? 'active' : '' ?>"
+                       href="/field-config/my-dept">Field Config</a>
                 </li>
                 <?php endif; ?>
 

@@ -60,4 +60,10 @@ class Db
         $stmt->execute($params);
         return $stmt->rowCount();
     }
+
+    /** Returns the ID of the last inserted row. */
+    public static function lastInsertId(): string
+    {
+        return self::conn()->lastInsertId();
+    }
 }

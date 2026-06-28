@@ -223,5 +223,81 @@ function sis_test_schema(): array
         )",
         // Module 9 — must_change_password column on users
         "ALTER TABLE users ADD COLUMN must_change_password INTEGER NOT NULL DEFAULT 0",
+        // Module 10 — field_configs
+        "CREATE TABLE IF NOT EXISTS field_configs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            field_key TEXT NOT NULL,
+            department_id INTEGER NOT NULL DEFAULT 0,
+            mode TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            UNIQUE (field_key, department_id)
+        )",
+        // Module 10 — custom_fields
+        "CREATE TABLE IF NOT EXISTS custom_fields (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            field_key TEXT NOT NULL DEFAULT '',
+            label TEXT NOT NULL,
+            field_type TEXT NOT NULL,
+            section TEXT NOT NULL,
+            scope TEXT NOT NULL DEFAULT 'institution',
+            department_id INTEGER NULL,
+            mode TEXT NOT NULL DEFAULT 'optional',
+            options TEXT NULL,
+            status TEXT NOT NULL DEFAULT 'active',
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_by INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NULL,
+            UNIQUE (field_key)
+        )",
+        // Module 10 — student_custom_data
+        "CREATE TABLE IF NOT EXISTS student_custom_data (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER NOT NULL,
+            custom_field_id INTEGER NOT NULL,
+            value TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL,
+            updated_at TEXT NULL,
+            UNIQUE (student_id, custom_field_id)
+        )",
+        // Module 12 — promotion_batches
+        "CREATE TABLE IF NOT EXISTS promotion_batches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            department_id INTEGER NOT NULL,
+            target_academic_year_id INTEGER NOT NULL,
+            target_class_id INTEGER NOT NULL,
+            target_section_id INTEGER NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending_approval',
+            requires_inst_admin INTEGER NOT NULL DEFAULT 0,
+            initiated_by INTEGER NOT NULL,
+            rejection_reason TEXT NULL,
+            reviewed_by INTEGER NULL,
+            reviewed_at TEXT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NULL
+        )",
+        // Module 12 — promotion_batch_students
+        "CREATE TABLE IF NOT EXISTS promotion_batch_students (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            batch_id INTEGER NOT NULL,
+            student_id INTEGER NOT NULL,
+            UNIQUE (batch_id, student_id)
+        )",
+        // Module 12 — promotion_exclusions
+        "CREATE TABLE IF NOT EXISTS promotion_exclusions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            batch_id INTEGER NOT NULL,
+            student_id INTEGER NOT NULL,
+            reason TEXT NOT NULL,
+            UNIQUE (batch_id, student_id)
+        )",
+        // Module 12 — settings
+        "CREATE TABLE IF NOT EXISTS settings (
+            key TEXT NOT NULL,
+            value TEXT NOT NULL DEFAULT '',
+            PRIMARY KEY (key)
+        )",
+        "INSERT OR IGNORE INTO settings (key, value) VALUES ('promotion_window_open', '0')",
     ];
 }

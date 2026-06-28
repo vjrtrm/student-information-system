@@ -2,6 +2,8 @@
 namespace App\Controllers;
 
 use App\Helpers\Auth;
+use App\Helpers\Db;
+use App\Helpers\FieldConfig;
 use App\Helpers\FormFieldRules;
 use App\Helpers\DocumentUploadHandler;
 use App\Helpers\UploadException;
@@ -31,8 +33,17 @@ class StudentFormController extends Controller
         $summary   = StudentProfile::getCompletionSummary($profile, $student);
         $dropdowns = $this->loadDropdowns();
 
+        $deptId      = (int)($student['department_id'] ?? 0);
+        $fieldConfig = FieldConfig::resolve($deptId);
+        $customFields = FieldConfig::resolveCustomFields($deptId);
+        $customData  = [];
+        $cdRows      = Db::selectAll('SELECT custom_field_id, value FROM student_custom_data WHERE student_id = ?', [$studentId]);
+        foreach ($cdRows as $row) {
+            $customData[(int)$row['custom_field_id']] = $row['value'];
+        }
+
         $this->render('student-form/show', array_merge(compact(
-            'student', 'profile', 'rules', 'summary'
+            'student', 'profile', 'rules', 'summary', 'fieldConfig', 'customFields', 'customData'
         ), $dropdowns));
     }
 
@@ -84,10 +95,51 @@ class StudentFormController extends Controller
 
         StudentProfile::upsert($studentId, $data);
 
+        // Save custom field values
+        $deptId      = (int)($student['department_id'] ?? 0);
+        $fieldConfig = FieldConfig::resolve($deptId);
+        $customFields = FieldConfig::resolveCustomFields($deptId);
+        $now         = date('Y-m-d H:i:s');
+        foreach ($customFields as $cf) {
+            $cfKey  = 'custom_' . $cf['id'];
+            $cfMode = $fieldConfig[$cfKey] ?? $cf['mode'];
+            if ($cfMode === 'hidden') continue;
+            $value = trim($_POST[$cfKey] ?? '');
+            Db::execute(
+                'REPLACE INTO student_custom_data (student_id, custom_field_id, value, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+                [$studentId, (int)$cf['id'], $value, $now, $now]
+            );
+        }
+
         // Recompute completion
         $updatedProfile = StudentProfile::findByStudent($studentId) ?? [];
         $updatedRules   = FormFieldRules::getApplicableFields($updatedProfile, $student);
         $pct            = FormFieldRules::computeCompletion($updatedProfile, $updatedRules);
+
+        // Factor in required custom fields
+        $customTotal  = 0;
+        $customFilled = 0;
+        $cdRows       = Db::selectAll('SELECT custom_field_id, value FROM student_custom_data WHERE student_id = ?', [$studentId]);
+        $customData   = [];
+        foreach ($cdRows as $row) { $customData[(int)$row['custom_field_id']] = $row['value']; }
+        foreach ($customFields as $cf) {
+            $cfKey  = 'custom_' . $cf['id'];
+            $cfMode = $fieldConfig[$cfKey] ?? $cf['mode'];
+            if ($cfMode !== 'required') continue;
+            $customTotal++;
+            if (isset($customData[(int)$cf['id']]) && trim($customData[(int)$cf['id']]) !== '') {
+                $customFilled++;
+            }
+        }
+        if ($customTotal > 0) {
+            // Blend custom required fields into completion pct
+            $builtinRequired = count(array_filter(FormFieldRules::getApplicableFields($updatedProfile, $student), fn($f) => $f['required'] && $f['visible']));
+            $totalRequired   = $builtinRequired + $customTotal;
+            $builtinFilled   = (int)round(($pct / 100) * $builtinRequired);
+            $totalFilled     = $builtinFilled + $customFilled;
+            $pct = $totalRequired > 0 ? (int)floor(($totalFilled / $totalRequired) * 100) : $pct;
+        }
+
         StudentProfile::updateCompletion($studentId, $pct);
 
         if ($uploadErrors) {
@@ -117,8 +169,28 @@ class StudentFormController extends Controller
         $rules   = FormFieldRules::getApplicableFields($profile, $student);
         $summary = StudentProfile::getCompletionSummary($profile, $student);
 
-        if (!empty($summary['missing'])) {
-            $list = implode(', ', array_values($summary['missing']));
+        // Validate required custom fields
+        $deptId       = (int)($student['department_id'] ?? 0);
+        $fieldConfig  = FieldConfig::resolve($deptId);
+        $customFields = FieldConfig::resolveCustomFields($deptId);
+        $cdRows       = Db::selectAll('SELECT custom_field_id, value FROM student_custom_data WHERE student_id = ?', [$studentId]);
+        $customData   = [];
+        foreach ($cdRows as $row) { $customData[(int)$row['custom_field_id']] = $row['value']; }
+        $customMissing = [];
+        foreach ($customFields as $cf) {
+            $cfKey  = 'custom_' . $cf['id'];
+            $cfMode = $fieldConfig[$cfKey] ?? $cf['mode'];
+            if ($cfMode === 'required') {
+                $val = isset($customData[(int)$cf['id']]) ? trim($customData[(int)$cf['id']]) : '';
+                if ($val === '') {
+                    $customMissing[] = $cf['label'];
+                }
+            }
+        }
+
+        $missing = array_merge(array_values($summary['missing']), $customMissing);
+        if (!empty($missing)) {
+            $list = implode(', ', $missing);
             $_SESSION['flash'] = ['type'=>'danger','message'=>"Please complete the following required fields: {$list}."];
             $this->redirect('/student/form');
             return;
@@ -134,11 +206,16 @@ class StudentFormController extends Controller
     public function view(): void
     {
         RoleMiddleware::handle(['student']);
-        $studentId = Auth::id();
-        $student   = Student::find($studentId);
-        $profile   = StudentProfile::findByStudent($studentId) ?? [];
-        $isStaff   = false;
-        $this->render('student-form/readonly', compact('student', 'profile', 'isStaff'));
+        $studentId    = Auth::id();
+        $student      = Student::find($studentId);
+        $profile      = StudentProfile::findByStudent($studentId) ?? [];
+        $isStaff      = false;
+        $deptId       = (int)($student['department_id'] ?? 0);
+        $customFields = FieldConfig::resolveCustomFields($deptId);
+        $cdRows       = Db::selectAll('SELECT custom_field_id, value FROM student_custom_data WHERE student_id = ?', [$studentId]);
+        $customData   = [];
+        foreach ($cdRows as $row) { $customData[(int)$row['custom_field_id']] = $row['value']; }
+        $this->render('student-form/readonly', compact('student', 'profile', 'isStaff', 'customFields', 'customData'));
     }
 
     // GET /student/form/{studentId}/view  (staff/admin)
@@ -152,9 +229,14 @@ class StudentFormController extends Controller
             DepartmentScopeMiddleware::assertDepartment((int)$student['department_id']);
         }
 
-        $profile = StudentProfile::findByStudent($studentId) ?? [];
-        $isStaff = true;
-        $this->render('student-form/readonly', compact('student', 'profile', 'isStaff'));
+        $profile      = StudentProfile::findByStudent($studentId) ?? [];
+        $isStaff      = true;
+        $deptId       = (int)($student['department_id'] ?? 0);
+        $customFields = FieldConfig::resolveCustomFields($deptId);
+        $cdRows       = Db::selectAll('SELECT custom_field_id, value FROM student_custom_data WHERE student_id = ?', [$studentId]);
+        $customData   = [];
+        foreach ($cdRows as $row) { $customData[(int)$row['custom_field_id']] = $row['value']; }
+        $this->render('student-form/readonly', compact('student', 'profile', 'isStaff', 'customFields', 'customData'));
     }
 
     // ── Private helpers ──────────────────────────────────────────────────
