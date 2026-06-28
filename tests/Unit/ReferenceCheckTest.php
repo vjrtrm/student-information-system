@@ -26,7 +26,7 @@ class ReferenceCheckTest extends TestCase
         parent::setUp(); // creates base schema + injects PDO into Db
 
         $this->pdo->exec(
-            "CREATE TABLE states (
+            "CREATE TABLE IF NOT EXISTS states (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 status TEXT NOT NULL DEFAULT 'active',
@@ -34,7 +34,7 @@ class ReferenceCheckTest extends TestCase
             )"
         );
         $this->pdo->exec(
-            "CREATE TABLE districts (
+            "CREATE TABLE IF NOT EXISTS districts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 state_id INTEGER NOT NULL,
                 name TEXT NOT NULL,
@@ -43,7 +43,7 @@ class ReferenceCheckTest extends TestCase
             )"
         );
         $this->pdo->exec(
-            "CREATE TABLE taluks (
+            "CREATE TABLE IF NOT EXISTS taluks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 district_id INTEGER NOT NULL,
                 name TEXT NOT NULL,

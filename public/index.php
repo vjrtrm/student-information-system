@@ -19,6 +19,8 @@ use App\Controllers\GeographyController;
 use App\Controllers\LookupController;
 use App\Controllers\OptionListController;
 use App\Controllers\OnboardingController;
+use App\Controllers\EnrolmentController;
+use App\Controllers\StudentFormController;
 
 Config::setPath(dirname(__DIR__) . '/config');
 Auth::start();
@@ -120,6 +122,23 @@ $routes = [
     ['GET',  '/onboarding/add',                     [OnboardingController::class, 'showAdd'],          ['auth']],
     ['POST', '/onboarding/add',                     [OnboardingController::class, 'store'],            ['auth']],
     ['GET',  '/onboarding/summary',                 [OnboardingController::class, 'summary'],          ['auth']],
+
+    // --- Module 4: Enrolment Numbers ---
+    ['GET',  '/enrolment',                             [EnrolmentController::class, 'index'],          ['auth']],
+    ['GET',  '/enrolment/generate',                    [EnrolmentController::class, 'generateForm'],   ['auth']],
+    ['POST', '/enrolment/generate',                    [EnrolmentController::class, 'generate'],       ['auth']],
+    ['GET',  '/enrolment/eligible-count',              [EnrolmentController::class, 'eligibleCount'],  ['auth']],
+    ['GET',  '/enrolment/summary',                     [EnrolmentController::class, 'summary'],        ['auth']],
+    ['GET',  '/enrolment/batch/{id}',                  [EnrolmentController::class, 'batchDetail'],    ['auth']],
+    ['POST', '/enrolment/batch/{id}/approve-all',      [EnrolmentController::class, 'approveAll'],     ['auth']],
+    ['POST', '/enrolment/batch/{id}/approve-selected', [EnrolmentController::class, 'approveSelected'],['auth']],
+
+    // --- Module 5: Student Information Form ---
+    ['GET',  '/student/form',                      [StudentFormController::class, 'show'],      ['auth']],
+    ['POST', '/student/form/save',                 [StudentFormController::class, 'save'],      ['auth']],
+    ['POST', '/student/form/submit',               [StudentFormController::class, 'submit'],    ['auth']],
+    ['GET',  '/student/form/view',                 [StudentFormController::class, 'view'],      ['auth']],
+    ['GET',  '/student/form/{studentId}/view',     [StudentFormController::class, 'staffView'], ['auth']],
 ];
 
 foreach ($routes as [$m, $path, $handler, $mw]) {

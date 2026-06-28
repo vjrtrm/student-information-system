@@ -35,4 +35,11 @@ class View
         header('Location: ' . $base . $path);
         exit;
     }
+
+    /** Mask Aadhaar: show only last 4 digits. */
+    public static function maskAadhaar(?string $number): string
+    {
+        if (!$number || strlen($number) < 4) return '—';
+        return 'XXXX-XXXX-' . substr($number, -4);
+    }
 }

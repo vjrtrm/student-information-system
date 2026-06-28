@@ -39,15 +39,31 @@ unset($_SESSION['flash']);
                     <a class="nav-link" href="/dashboard">Dashboard</a>
                 </li>
 
+                <?php if (Auth::role() === 'student'): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="/student/form">My Form</a>
+                </li>
+                <?php endif; ?>
+
                 <?php if (in_array(Auth::role(), ['staff', 'dept_admin', 'institution_admin'], true)): ?>
                 <li class="nav-item">
                     <a class="nav-link" href="/onboarding">Students</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/enrolment">Enrolment Numbers</a>
+                </li>
                 <?php endif; ?>
 
                 <?php if (Auth::role() === 'institution_admin'): ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="/onboarding/summary">Onboarding Summary</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="summaryDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Summaries
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="summaryDropdown">
+                        <li><a class="dropdown-item" href="/onboarding/summary">Onboarding Summary</a></li>
+                        <li><a class="dropdown-item" href="/enrolment/summary">Enrolment Summary</a></li>
+                    </ul>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="masterDataDropdown"

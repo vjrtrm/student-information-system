@@ -161,4 +161,148 @@ class Student
             $params
         );
     }
+
+    // ── M4 Enrolment methods ──────────────────────────────────────────────
+
+    /** Students eligible for enrolment number generation:
+     *  onboarding_status = 'pending_enrolment' AND enrolment_approval_status IS NULL */
+    public static function findPendingForGeneration(int $deptId, int $ayId): array
+    {
+        return Db::select(
+            "SELECT * FROM students
+             WHERE department_id = ? AND academic_year_id = ?
+               AND onboarding_status = 'pending_enrolment'
+               AND enrolment_approval_status IS NULL
+             ORDER BY id",
+            [$deptId, $ayId]
+        );
+    }
+
+    /** True if any student in dept+year has enrolment_approval_status = 'pending'. */
+    public static function hasPendingBatch(int $deptId, int $ayId): bool
+    {
+        $row = Db::selectOne(
+            "SELECT COUNT(*) AS cnt FROM students
+             WHERE department_id = ? AND academic_year_id = ?
+               AND enrolment_approval_status = 'pending'",
+            [$deptId, $ayId]
+        );
+        return (int)($row['cnt'] ?? 0) > 0;
+    }
+
+    /** Get highest used serial for a dept+year (across all batches). */
+    public static function maxSerial(int $deptId, int $ayId): int
+    {
+        $row = Db::selectOne(
+            "SELECT COALESCE(MAX(enrolment_serial), 0) AS max_serial
+             FROM students
+             WHERE department_id = ? AND academic_year_id = ?
+               AND enrolment_serial IS NOT NULL",
+            [$deptId, $ayId]
+        );
+        return (int)($row['max_serial'] ?? 0);
+    }
+
+    /** Assign provisional enrolment number to a student (within a generation transaction). */
+    public static function assignEnrolmentNumber(
+        int $id, string $number, int $serial, int $batchId
+    ): void {
+        Db::execute(
+            "UPDATE students
+             SET enrolment_number = ?, enrolment_serial = ?,
+                 enrolment_approval_status = 'pending', enrolment_batch_id = ?
+             WHERE id = ?",
+            [$number, $serial, $batchId, $id]
+        );
+    }
+
+    /**
+     * Bulk-approve enrolment numbers for the given student IDs.
+     * Only updates rows that are still 'pending' and belong to $batchId.
+     * Returns count of rows actually updated.
+     */
+    public static function approveNumbers(array $ids, int $batchId, int $approvedBy): int
+    {
+        if (empty($ids)) return 0;
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        // params order: approvedBy, approvedAt, then ids for IN(), then batchId
+        $params = array_merge(
+            [$approvedBy, date('Y-m-d H:i:s')],
+            $ids,
+            [$batchId]
+        );
+        return Db::execute(
+            "UPDATE students
+             SET enrolment_approval_status = 'approved',
+                 onboarding_status          = 'enrolment_assigned',
+                 enrolment_approved_by      = ?,
+                 enrolment_approved_at      = ?
+             WHERE id IN ({$placeholders})
+               AND enrolment_batch_id = ?
+               AND enrolment_approval_status = 'pending'",
+            $params
+        );
+    }
+
+    /** Returns ['number' => string|null, 'status' => string|null] for student dashboard. */
+    public static function getEnrolmentStatus(int $id): array
+    {
+        $row = Db::selectOne(
+            "SELECT enrolment_number, enrolment_approval_status FROM students WHERE id = ?",
+            [$id]
+        );
+        return [
+            'number' => ($row['enrolment_approval_status'] === 'approved')
+                        ? $row['enrolment_number'] : null,
+            'status' => $row['enrolment_approval_status'] ?? null,
+        ];
+    }
+
+    /** Paginated student list for a batch detail view. */
+    public static function findByBatch(int $batchId, array $filters = [], int $page = 1, int $perPage = 50): array
+    {
+        [$where, $params] = self::buildBatchWhere($batchId, $filters);
+        $offset   = ($page - 1) * $perPage;
+        $params[] = $perPage;
+        $params[] = $offset;
+        return Db::select(
+            "SELECT s.*,
+                    ov_ay.display AS ay_display,
+                    ov_cl.display AS class_display,
+                    ov_sc.display AS section_display,
+                    u.name        AS approved_by_name
+             FROM students s
+             LEFT JOIN option_values ov_ay ON ov_ay.id = s.academic_year_id
+             LEFT JOIN option_values ov_cl ON ov_cl.id = s.class_id
+             LEFT JOIN option_values ov_sc ON ov_sc.id = s.section_id
+             LEFT JOIN users u             ON u.id     = s.enrolment_approved_by
+             {$where}
+             ORDER BY s.enrolment_serial ASC
+             LIMIT ? OFFSET ?",
+            $params
+        );
+    }
+
+    public static function countByBatch(int $batchId, array $filters = []): int
+    {
+        [$where, $params] = self::buildBatchWhere($batchId, $filters);
+        $row = Db::selectOne("SELECT COUNT(*) AS cnt FROM students s {$where}", $params);
+        return (int)($row['cnt'] ?? 0);
+    }
+
+    private static function buildBatchWhere(int $batchId, array $filters): array
+    {
+        $clauses = ["s.enrolment_batch_id = ?"];
+        $params  = [$batchId];
+        if (!empty($filters['search'])) {
+            $like      = '%' . $filters['search'] . '%';
+            $clauses[] = "(s.first_name LIKE ? OR s.last_name LIKE ? OR s.mobile LIKE ?)";
+            $params    = array_merge($params, [$like, $like, $like]);
+        }
+        if (!empty($filters['enrolment_approval_status'])) {
+            $clauses[] = "s.enrolment_approval_status = ?";
+            $params[]  = $filters['enrolment_approval_status'];
+        }
+        return ["WHERE " . implode(" AND ", $clauses), $params];
+    }
 }

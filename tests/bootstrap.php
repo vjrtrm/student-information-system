@@ -106,5 +106,81 @@ function sis_test_schema(): array
             reviewed_at TEXT,
             created_at TEXT
         )",
+        // Module 4 — M4 columns on students
+        "ALTER TABLE students ADD COLUMN enrolment_number TEXT",
+        "ALTER TABLE students ADD COLUMN enrolment_serial INTEGER",
+        "ALTER TABLE students ADD COLUMN enrolment_approval_status TEXT",
+        "ALTER TABLE students ADD COLUMN enrolment_batch_id INTEGER",
+        "ALTER TABLE students ADD COLUMN enrolment_approved_by INTEGER",
+        "ALTER TABLE students ADD COLUMN enrolment_approved_at TEXT",
+        // Module 4 — enrolment_batches
+        "CREATE TABLE IF NOT EXISTS enrolment_batches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            department_id INTEGER NOT NULL,
+            academic_year_id INTEGER NOT NULL,
+            generated_by INTEGER NOT NULL,
+            student_count INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT
+        )",
+        // Module 5 — student_profiles
+        "CREATE TABLE IF NOT EXISTS student_profiles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER NOT NULL UNIQUE,
+            blood_group TEXT, mother_tongue TEXT, religion TEXT, caste TEXT,
+            caste_category TEXT, sub_caste TEXT, nationality TEXT DEFAULT 'Indian',
+            place_of_birth TEXT, aadhaar_number TEXT, passport_photo_path TEXT,
+            student_email TEXT, alternate_mobile TEXT,
+            marital_status TEXT DEFAULT 'Single',
+            physically_challenged INTEGER NOT NULL DEFAULT 0,
+            disability_nature TEXT, first_graduate INTEGER, annual_family_income INTEGER,
+            perm_address1 TEXT, perm_address2 TEXT, perm_city TEXT,
+            perm_taluk_id INTEGER, perm_district_id INTEGER, perm_state_id INTEGER, perm_pincode TEXT,
+            comm_same_as_perm INTEGER NOT NULL DEFAULT 0,
+            comm_address1 TEXT, comm_address2 TEXT, comm_city TEXT,
+            comm_taluk_id INTEGER, comm_district_id INTEGER, comm_state_id INTEGER, comm_pincode TEXT,
+            family_situation TEXT, father_name TEXT, father_occupation TEXT, father_qualification TEXT,
+            father_annual_income INTEGER, father_mobile TEXT, father_email TEXT,
+            mother_name TEXT, mother_occupation TEXT, mother_qualification TEXT,
+            mother_annual_income INTEGER, mother_mobile TEXT, mother_email TEXT,
+            guardian_name TEXT, guardian_relationship TEXT, guardian_mobile TEXT,
+            guardian_address TEXT, guardian_email TEXT,
+            qual_sslc TEXT, qual_hsc TEXT, qual_ug TEXT, qual_diploma TEXT,
+            qual_other_1 TEXT, qual_other_2 TEXT,
+            qual_sslc_doc_path TEXT, qual_hsc_doc_path TEXT, qual_ug_doc_path TEXT,
+            qual_diploma_doc_path TEXT,
+            admission_type TEXT, entrance_exam_name TEXT, entrance_hall_ticket TEXT,
+            entrance_rank_score TEXT, admission_number TEXT,
+            community_cert_number TEXT, community_cert_path TEXT,
+            transfer_cert_number TEXT, transfer_cert_path TEXT,
+            conduct_cert_path TEXT, migration_cert_path TEXT, income_cert_path TEXT,
+            nativity_cert_path TEXT, aadhaar_copy_path TEXT,
+            bank_account_holder TEXT, bank_name TEXT, bank_branch TEXT,
+            bank_account_number TEXT, bank_ifsc TEXT, bank_passbook_path TEXT,
+            scholarship_applied INTEGER DEFAULT 0, scholarship_scheme TEXT, scholarship_app_number TEXT,
+            form_completion_pct INTEGER NOT NULL DEFAULT 0,
+            form_status TEXT NOT NULL DEFAULT 'incomplete',
+            form_submitted_at TEXT, last_saved_at TEXT, created_at TEXT, updated_at TEXT
+        )",
+        // Geography tables (used by M2 tests and M5 address joins)
+        "CREATE TABLE IF NOT EXISTS states (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'active',
+            created_at TEXT
+        )",
+        "CREATE TABLE IF NOT EXISTS districts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            state_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'active',
+            created_at TEXT
+        )",
+        "CREATE TABLE IF NOT EXISTS taluks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            district_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'active',
+            created_at TEXT
+        )",
     ];
 }

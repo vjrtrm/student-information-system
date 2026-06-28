@@ -20,12 +20,12 @@ PHP 8.x · MVC · MySQL 5.7 · Bootstrap 5 · PDO · PHPMailer/SMTP · PhpSpread
 Every feature/module goes **Requirements → Design → Tasks**, each as a Markdown file, **each presented for the user's review + explicit approval before the next stage.** Never jump ahead. Use the `sis-spec` project skill templates (`.claude/skills/sis-spec/templates/`) so structure isn't regenerated from scratch.
 
 ## Module roadmap (run the 3-stage cycle in this order)
-1. Authentication & Access Control  ← specs + code done
-2. Master Data & Department Management  ← specs + code done
-3. Student Onboarding (bulk upload)  ← specs + code done (verify tests + commit)
-4. Enrolment Number Generation & Approval  ← next
-5. Student Information Form (dynamic fields, partial save, submit/lock)
-6. Submission & Edit Approval (Request-to-Change)
+1. Authentication & Access Control  ← specs + code done (committed)
+2. Master Data & Department Management  ← specs + code done (committed)
+3. Student Onboarding (bulk upload)  ← specs + code done (committed)
+4. Enrolment Number Generation & Approval  ← specs + code done (commit pending)
+5. Student Information Form (dynamic fields, partial save, submit/lock)  ← specs + code done (commit pending)
+6. Submission & Edit Approval (Request-to-Change)  ← next
 7. Notifications
 8. Dashboards, Statistics & Personalisation
 9. Staff Management

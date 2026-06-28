@@ -12,7 +12,7 @@ ALTER TABLE students
   ADD COLUMN section_id        INT NULL AFTER class_id,
   ADD COLUMN admission_date    DATE NULL AFTER section_id,
   ADD COLUMN onboarding_status ENUM('pending_enrolment','enrolment_assigned','form_submitted','approved') NOT NULL DEFAULT 'pending_enrolment' AFTER status,
-  ADD COLUMN login_enabled     TINYINT(1) NOT NULL DEFAULT 0 AFTER onboarding_status,
+  ADD COLUMN login_enabled     TINYINT(1) NOT NULL DEFAULT 1 AFTER onboarding_status,
   ADD COLUMN created_by        INT NULL AFTER login_enabled,
   ADD COLUMN upload_batch_id   INT NULL AFTER created_by,
   ADD COLUMN updated_at        TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP AFTER created_at;
