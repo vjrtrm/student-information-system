@@ -1,0 +1,17 @@
+INSERT IGNORE INTO option_lists (list_key, label) VALUES
+  ('community',        'Community'),
+  ('religion',         'Religion'),
+  ('blood_group',      'Blood Group'),
+  ('sslc_board',       'SSLC Board'),
+  ('hsc_board',        'HSC Board'),
+  ('hsc_group',        'HSC Group'),
+  ('medium',           'Medium of Study'),
+  ('education',        'Education Qualification'),
+  ('occupation',       'Occupation'),
+  ('discover_source',  'How did you discover us'),
+  ('choose_reason',    'Reasons for choosing us'),
+  ('institution_name', 'Institution Name'),
+  ('language',         'Language'),
+  ('academic_year',    'Academic Year'),
+  ('class',            'Class'),
+  ('section',          'Section');

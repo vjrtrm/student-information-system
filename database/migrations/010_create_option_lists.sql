@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS option_lists (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  list_key   VARCHAR(60) NOT NULL,
+  label      VARCHAR(120) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_option_lists_key (list_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
