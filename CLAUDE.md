@@ -23,8 +23,8 @@ Every feature/module goes **Requirements → Design → Tasks**, each as a Markd
 1. Authentication & Access Control  ← specs + code done (committed)
 2. Master Data & Department Management  ← specs + code done (committed)
 3. Student Onboarding (bulk upload)  ← specs + code done (committed)
-4. Enrolment Number Generation & Approval  ← specs + code done (commit pending)
-5. Student Information Form (dynamic fields, partial save, submit/lock)  ← specs + code done (commit pending)
+4. Enrolment Number Generation & Approval  ← specs + code done (committed)
+5. Student Information Form (dynamic fields, partial save, submit/lock)  ← specs + code done (committed)
 6. Submission & Edit Approval (Request-to-Change)  ← next
 7. Notifications
 8. Dashboards, Statistics & Personalisation
@@ -36,6 +36,16 @@ Every feature/module goes **Requirements → Design → Tasks**, each as a Markd
 ## File conventions
 - Per-module specs live under `docs/module-<NN>-<name>/` as `SIS_M<N>_<Name>_<Requirements|Design|Tasks>.md`.
 - Master combined spec: `docs/SIS_Specification.docx` (reference only; don't read unless necessary).
+
+## Code conventions (established M1–M5 — reuse, don't reinvent)
+- **Routing:** add routes to the table in `public/index.php` (`matchRoute` supports `{param}`). Group by module.
+- **Controllers** extend `App\Controllers\Controller`; call `RoleMiddleware::handle([...])` at the top of each action; verify CSRF via `$this->requireCsrf()` on POST; department-scope with `Auth::departmentId()` / `DepartmentScopeMiddleware`.
+- **DB:** `App\Helpers\Db` (static, injectable PDO) with prepared statements only. Compute timestamps in PHP (`date('Y-m-d H:i:s')`), never `NOW()` (SQLite tests).
+- **Migrations:** one file per change, `NNN_verb_subject.sql`, unique prefix; plain `ADD COLUMN` (no `IF NOT EXISTS`). Mirror every new table/column into `tests/bootstrap.php` `sis_test_schema()` as `CREATE TABLE IF NOT EXISTS` (SQLite-compatible).
+- **Audit:** master/business actions → `audit_log` via `MasterAuditLogger`; auth events → `auth_audit_log` via `AuditLogger`. Don't mix.
+- **PII:** mask Aadhaar with `View::maskAadhaar()`; no PII in emails/logs. Uploads via `DocumentUploadHandler` (≤ 2 MB; photo = image-only).
+- **UI:** Bootstrap 5 via `Views/layouts/app.php`; user feedback through `$_SESSION['flash']`.
+- **Tests:** PHPUnit on in-memory SQLite; extend `Tests\TestCase` (seeders: `seedDepartment/seedUser/seedStudent/seedFullStudent`).
 
 ## Where work happens
 - **Specs (Requirements/Design/Tasks)** are authored in Cowork, approval-gated.

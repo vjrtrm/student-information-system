@@ -27,3 +27,7 @@ config/secrets.php
 
 # Generated
 DOCS_INDEX.md
+
+# Agent worktrees & caches
+.claude/worktrees/
+.phpunit.cache/
