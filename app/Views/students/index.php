@@ -175,7 +175,7 @@ $showTo   = min($offset + $perPage, $total);
                     <?php foreach ($rows as $s): ?>
                     <?php
                         $enrolDisplay = $s['enrolment_number']
-                            ?: ($s['enrolment_serial'] ? '#' . $s['enrolment_serial'] : '&#8212;');
+                            ?: ($s['enrolment_serial'] ? '#' . $s['enrolment_serial'] : '—');
                         $fsBadge = match($s['form_status'] ?? '') {
                             'submitted' => 'primary',
                             'approved'  => 'success',
@@ -198,11 +198,11 @@ $showTo   = min($offset + $perPage, $total);
                                 <?= htmlspecialchars(trim(($s['first_name'] ?? '') . ' ' . ($s['last_name'] ?? ''))) ?>
                             </a>
                         </td>
-                        <td><?= htmlspecialchars($s['programme_level'] ?? '&#8212;') ?></td>
+                        <td><?= htmlspecialchars($s['programme_level'] ?? '—') ?></td>
                         <?php if (Auth::role() === 'institution_admin'): ?>
-                        <td><?= htmlspecialchars($s['dept_name'] ?? '&#8212;') ?></td>
+                        <td><?= htmlspecialchars($s['dept_name'] ?? '—') ?></td>
                         <?php endif; ?>
-                        <td><?= htmlspecialchars($s['academic_year_label'] ?? '&#8212;') ?></td>
+                        <td><?= htmlspecialchars($s['academic_year_label'] ?? '—') ?></td>
                         <td><span class="badge bg-<?= $fsBadge ?>"><?= htmlspecialchars($fsLabel) ?></span></td>
                         <td><span class="badge bg-<?= $enrolBadge ?>"><?= htmlspecialchars($enrolLabel) ?></span></td>
                         <td>
