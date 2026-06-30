@@ -58,6 +58,3 @@ ob_start();
         </form>
     </div>
 </div>
-<?php
-$content = ob_get_clean();
-require dirname(__DIR__) . '/layouts/app.php';

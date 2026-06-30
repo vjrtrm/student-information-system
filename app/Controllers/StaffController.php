@@ -132,7 +132,7 @@ class StaffController extends Controller
         $this->redirect('/staff');
     }
 
-    public function editForm(string $id): void
+    public function editForm(int $id): void
     {
         RoleMiddleware::handle(['dept_admin', 'institution_admin']);
         $userId = (int)$id;
@@ -152,7 +152,7 @@ class StaffController extends Controller
         ]);
     }
 
-    public function update(string $id): void
+    public function update(int $id): void
     {
         RoleMiddleware::handle(['dept_admin', 'institution_admin']);
         $this->requireCsrf();
@@ -230,7 +230,7 @@ class StaffController extends Controller
         $this->redirect('/staff');
     }
 
-    public function toggleStatus(string $id): void
+    public function toggleStatus(int $id): void
     {
         RoleMiddleware::handle(['dept_admin', 'institution_admin']);
         $this->requireCsrf();
@@ -268,7 +268,7 @@ class StaffController extends Controller
         $this->redirect('/staff');
     }
 
-    public function resetPasswordForm(string $id): void
+    public function resetPasswordForm(int $id): void
     {
         RoleMiddleware::handle(['dept_admin', 'institution_admin']);
         $userId = (int)$id;
@@ -281,7 +281,7 @@ class StaffController extends Controller
         ]);
     }
 
-    public function resetPassword(string $id): void
+    public function resetPassword(int $id): void
     {
         RoleMiddleware::handle(['dept_admin', 'institution_admin']);
         $this->requireCsrf();

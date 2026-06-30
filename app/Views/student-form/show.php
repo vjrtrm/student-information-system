@@ -25,7 +25,7 @@ $isLateral = $admType === 'lateral_entry';
   </div>
 </div>
 
-<form method="POST" action="/student/form/save" enctype="multipart/form-data" id="profileForm">
+<form method="POST" action="/student/form/save" enctype="multipart/form-data" id="profileForm" novalidate>
   <?= \App\Helpers\Csrf::field() ?>
 
   <div class="accordion" id="formAccordion">

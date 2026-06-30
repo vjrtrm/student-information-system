@@ -1,5 +1,4 @@
 <?php $title = 'Request a Change'; ?>
-<?php ob_start(); ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Request a Change</h4>
@@ -155,6 +154,3 @@ document.querySelectorAll('.field-chk').forEach(chk => {
     });
 });
 </script>
-
-<?php $content = ob_get_clean(); ?>
-<?php require dirname(__DIR__) . '/layouts/app.php'; ?>

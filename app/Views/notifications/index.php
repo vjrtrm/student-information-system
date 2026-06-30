@@ -1,5 +1,4 @@
 <?php $title = 'Notifications Log'; ?>
-<?php ob_start(); ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">
@@ -15,7 +14,7 @@
 
     <!-- Send Now -->
     <form method="POST" action="/notifications/send">
-        <?= \App\Helpers\View::csrfField() ?>
+        <?= \App\Helpers\Csrf::field() ?>
         <?php if ($role === 'institution_admin' && $filterDeptId): ?>
             <input type="hidden" name="department_id" value="<?= (int)$filterDeptId ?>">
         <?php endif; ?>
@@ -118,6 +117,3 @@
         <p class="text-muted small">Showing <?= count($events) ?> of <?= $total ?> events</p>
     <?php endif; ?>
 <?php endif; ?>
-
-<?php $content = ob_get_clean(); ?>
-<?php require dirname(__DIR__) . '/layouts/app.php'; ?>

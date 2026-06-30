@@ -1,5 +1,4 @@
 <?php $title = 'Change Request #' . $rtc['id']; ?>
-<?php ob_start(); ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Change Request #<?= (int)$rtc['id'] ?></h4>
@@ -119,6 +118,3 @@
         </div></div>
     </div>
 <?php endif; ?>
-
-<?php $content = ob_get_clean(); ?>
-<?php require dirname(__DIR__) . '/layouts/app.php'; ?>

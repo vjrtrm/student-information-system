@@ -1,5 +1,4 @@
 <?php $title = 'Failed Notification Attempts'; ?>
-<?php ob_start(); ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Failed Notification Attempts</h4>
@@ -63,6 +62,3 @@
         </nav>
     <?php endif; ?>
 <?php endif; ?>
-
-<?php $content = ob_get_clean(); ?>
-<?php require dirname(__DIR__) . '/layouts/app.php'; ?>

@@ -1,5 +1,4 @@
 <?php $title = 'Approvals Queue'; ?>
-<?php ob_start(); ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">Approvals Queue</h4>
@@ -111,6 +110,3 @@
         <?php endif; ?>
     </div>
 </div>
-
-<?php $content = ob_get_clean(); ?>
-<?php require dirname(__DIR__) . '/layouts/app.php'; ?>

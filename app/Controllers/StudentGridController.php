@@ -312,7 +312,7 @@ class StudentGridController extends Controller
             'sort'        => $sort,
             'dir'         => $dir,
             'page'        => max(1, (int)($_GET['page'] ?? 1)),
-            'per_page'    => in_array((int)($_GET['per_page'] ?? 25), [25, 50, 100], true) ? (int)$_GET['per_page'] : 25,
+            'per_page'    => in_array((int)($_GET['per_page'] ?? 25), [25, 50, 100], true) ? (int)($_GET['per_page'] ?? 25) : 25,
         ];
     }
 

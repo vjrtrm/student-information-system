@@ -1,5 +1,4 @@
 <?php $title = 'My Change Requests'; ?>
-<?php ob_start(); ?>
 
 <h4 class="mb-4">My Change Requests</h4>
 
@@ -33,6 +32,3 @@
 <?php endif; ?>
 
 <a href="/student/form/view" class="btn btn-outline-secondary btn-sm mt-2">← Back to Form</a>
-
-<?php $content = ob_get_clean(); ?>
-<?php require dirname(__DIR__) . '/layouts/app.php'; ?>

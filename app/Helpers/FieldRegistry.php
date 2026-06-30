@@ -53,7 +53,7 @@ class FieldRegistry
         'physically_challenged' => ['label' => 'Physically Challenged',      'section' => 'Personal Details',              'default_mode' => 'required', 'locked' => false],
         'disability_nature'     => ['label' => 'Nature of Disability',       'section' => 'Personal Details',              'default_mode' => 'optional', 'locked' => false],
         'first_graduate'        => ['label' => 'First Graduate',             'section' => 'Personal Details',              'default_mode' => 'required', 'locked' => false],
-        'annual_family_income'  => ['label' => 'Annual Family Income (₹)',   'section' => 'Personal Details',              'default_mode' => 'required', 'locked' => false],
+        'annual_family_income'  => ['label' => 'Annual Family Income (₹)',   'section' => 'Parent / Guardian Details',     'default_mode' => 'required', 'locked' => false],
 
         // ── Section 2: Address Details ────────────────────────────────────
         // Locked — always required

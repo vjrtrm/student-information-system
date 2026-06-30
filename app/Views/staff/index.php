@@ -121,6 +121,3 @@ document.getElementById('staffSearch').addEventListener('keyup', function () {
     });
 });
 </script>
-<?php
-$content = ob_get_clean();
-require dirname(__DIR__) . '/layouts/app.php';

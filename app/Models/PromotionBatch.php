@@ -133,7 +133,7 @@ class PromotionBatch
 
     public static function isWindowOpen(): bool
     {
-        $row = Db::selectOne("SELECT value FROM settings WHERE key = 'promotion_window_open'");
+        $row = Db::selectOne("SELECT value FROM settings WHERE `key` = 'promotion_window_open'");
         return ($row['value'] ?? '0') === '1';
     }
 
