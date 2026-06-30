@@ -104,7 +104,12 @@ class StudentFormController extends Controller
             $cfKey  = 'custom_' . $cf['id'];
             $cfMode = $fieldConfig[$cfKey] ?? $cf['mode'];
             if ($cfMode === 'hidden') continue;
-            $value = trim($_POST[$cfKey] ?? '');
+            $raw = $_POST[$cfKey] ?? '';
+            if (is_array($raw)) {
+                $value = implode(',', array_map(fn($v) => is_string($v) ? trim($v) : (string)$v, $raw));
+            } else {
+                $value = trim((string)$raw);
+            }
             Db::execute(
                 'REPLACE INTO student_custom_data (student_id, custom_field_id, value, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
                 [$studentId, (int)$cf['id'], $value, $now, $now]
@@ -252,6 +257,10 @@ class StudentFormController extends Controller
             if (!array_key_exists($key, $post)) continue;
 
             $val        = $post[$key];
+            // Normalize array inputs: flatten to comma-separated string for simple fields
+            if (is_array($val)) {
+                $val = implode(',', array_map(fn($v) => is_string($v) ? $v : (string)$v, $val));
+            }
             $data[$key] = match($field['type']) {
                 'numeric'  => $val !== '' ? max(0, (int)$val) : null,
                 'phone'    => preg_replace('/\D/', '', (string)$val),
