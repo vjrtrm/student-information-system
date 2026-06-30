@@ -5,6 +5,53 @@
 -- Prerequisite: run 001–031 migrations first (tables must exist).
 -- =============================================================================
 
+-- Ensure option lists are present (safe to re-run). This makes the file
+-- importable standalone in tools like phpMyAdmin without running earlier
+-- migration files. If you prefer strict ordering, you can skip this and
+-- run migrations 001–013 first.
+-- Create minimal table definitions if they do not exist so this file
+-- can be imported standalone in tools like phpMyAdmin. These definitions
+-- mirror the migration schema for these two tables.
+CREATE TABLE IF NOT EXISTS option_lists (
+	id         INT AUTO_INCREMENT PRIMARY KEY,
+	list_key   VARCHAR(60) NOT NULL,
+	label      VARCHAR(120) NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	UNIQUE KEY uq_option_lists_key (list_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS option_values (
+	id           INT AUTO_INCREMENT PRIMARY KEY,
+	list_id      INT NOT NULL,
+	value        VARCHAR(150) NOT NULL,
+	display      VARCHAR(150) NOT NULL,
+	sort_order   INT NOT NULL DEFAULT 0,
+	status       ENUM('active','inactive') NOT NULL DEFAULT 'active',
+	created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	UNIQUE KEY uq_option_values_list_value (list_id, value),
+	KEY idx_option_values_list (list_id),
+	KEY idx_option_values_sort (list_id, sort_order),
+	CONSTRAINT fk_option_values_list FOREIGN KEY (list_id) REFERENCES option_lists(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT IGNORE INTO option_lists (list_key, label) VALUES
+	('community',        'Community'),
+	('religion',         'Religion'),
+	('blood_group',      'Blood Group'),
+	('sslc_board',       'SSLC Board'),
+	('hsc_board',        'HSC Board'),
+	('hsc_group',        'HSC Group'),
+	('medium',           'Medium of Study'),
+	('education',        'Education Qualification'),
+	('occupation',       'Occupation'),
+	('discover_source',  'How did you discover us'),
+	('choose_reason',    'Reasons for choosing us'),
+	('institution_name', 'Institution Name'),
+	('language',         'Language'),
+	('academic_year',    'Academic Year'),
+	('class',            'Class'),
+	('section',          'Section');
+
+
 -- 1. COMMUNITY
 SET @lid = (SELECT id FROM option_lists WHERE list_key = 'community');
 INSERT IGNORE INTO option_values (list_id, value, display, sort_order, status) VALUES
