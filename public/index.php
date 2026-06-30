@@ -227,7 +227,8 @@ foreach ($routes as [$m, $path, $handler, $mw]) {
     [$class, $action] = $handler;
     $controller = new $class();
     if (!empty($params)) {
-        $controller->{$action}(...array_values($params));
+        $castParams = array_map(fn($v) => ctype_digit((string)$v) ? (int)$v : $v, array_values($params));
+        $controller->{$action}(...$castParams);
     } else {
         $controller->{$action}();
     }
