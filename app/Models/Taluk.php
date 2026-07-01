@@ -13,10 +13,12 @@ class Taluk
     // Lookups
     // -------------------------------------------------------------------------
 
-    /** All taluks regardless of status, ordered by name. */
+    /** All taluks regardless of status, ordered by district and taluk name. */
     public static function all(): array
     {
-        return Db::select("SELECT * FROM taluks ORDER BY name");
+        return Db::select(
+            "SELECT t.*, d.name AS district_name FROM taluks t LEFT JOIN districts d ON d.id = t.district_id ORDER BY d.name, t.name"
+        );
     }
 
     /** Only active taluks. */

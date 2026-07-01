@@ -329,6 +329,17 @@ class GeographyModelTest extends TestCase
         $this->assertNull(Taluk::findByNameAndDistrict('Perambur', $distId2));
     }
 
+    public function testTalukAllIncludesDistrictName(): void
+    {
+        $stateId    = State::create('Tamil Nadu');
+        $districtId = District::create($stateId, 'Chennai');
+        $talukId    = Taluk::create($districtId, 'Ambattur');
+
+        $taluks = Taluk::all();
+        $this->assertSame('Chennai', $taluks[0]['district_name']);
+        $this->assertSame($talukId, (int)$taluks[0]['id']);
+    }
+
     public function testTalukUpdateChangesFields(): void
     {
         $stateId    = State::create('Tamil Nadu');
