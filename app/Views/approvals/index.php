@@ -59,7 +59,7 @@
                                 <td>
                                     <a href="/student/form/<?= (int)$s['id'] ?>/view" class="btn btn-sm btn-outline-primary me-1">View</a>
                                     <form method="POST" action="/approvals/<?= (int)$s['id'] ?>/approve" class="d-inline">
-                                        <?= \App\Helpers\View::csrfField() ?>
+                                        <?= \App\Helpers\Csrf::field() ?>
                                         <button class="btn btn-sm btn-success" onclick="return confirm('Approve submission for <?= htmlspecialchars($s['first_name']) ?>?')">Approve</button>
                                     </form>
                                 </td>

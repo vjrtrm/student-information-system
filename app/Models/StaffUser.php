@@ -72,11 +72,10 @@ class StaffUser
 
         $setParts = implode(', ', array_map(fn($col) => "{$col} = ?", array_keys($allowed)));
         $params   = array_values($allowed);
-        $params[] = date('Y-m-d H:i:s');
         $params[] = $id;
 
         Db::execute(
-            "UPDATE users SET {$setParts}, updated_at = ? WHERE id = ?",
+            "UPDATE users SET {$setParts} WHERE id = ?",
             $params
         );
     }

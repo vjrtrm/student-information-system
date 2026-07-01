@@ -6,7 +6,7 @@
 </div>
 
 <form method="POST" action="/rtc/create" enctype="multipart/form-data">
-    <?= \App\Helpers\View::csrfField() ?>
+    <?= \App\Helpers\Csrf::field() ?>
     <input type="hidden" name="student_id" value="<?= (int)$student['id'] ?>">
 
     <div class="mb-4">

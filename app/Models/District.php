@@ -16,7 +16,7 @@ class District
     /** All districts regardless of status, ordered by name. */
     public static function all(): array
     {
-        return Db::select("SELECT * FROM districts ORDER BY name");
+        return Db::select("SELECT d.*, s.name AS state_name FROM districts d LEFT JOIN states s ON s.id = d.state_id ORDER BY d.name");
     }
 
     /** Only active districts. */

@@ -94,7 +94,7 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form method="POST" action="/rtc/<?= (int)$rtc['id'] ?>/approve" class="d-inline">
-                    <?= \App\Helpers\View::csrfField() ?>
+                    <?= \App\Helpers\Csrf::field() ?>
                     <button class="btn btn-success">Yes, Apply Changes</button>
                 </form>
             </div>
@@ -104,7 +104,7 @@
     <div class="modal fade" id="rejectModal" tabindex="-1">
         <div class="modal-dialog"><div class="modal-content">
             <form method="POST" action="/rtc/<?= (int)$rtc['id'] ?>/reject">
-                <?= \App\Helpers\View::csrfField() ?>
+                <?= \App\Helpers\Csrf::field() ?>
                 <div class="modal-header"><h5 class="modal-title">Reject Change Request</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <label class="form-label">Rejection Reason <span class="text-danger">*</span></label>
