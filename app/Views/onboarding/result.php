@@ -62,12 +62,12 @@ $total   = (int)$batch['total_rows'];
 <div class="accordion mb-3" id="failedAccordion">
     <div class="accordion-item border-danger">
         <h2 class="accordion-header">
-            <button class="accordion-button collapsed bg-danger-subtle text-danger fw-semibold" type="button"
+            <button class="accordion-button bg-danger-subtle text-danger fw-semibold" type="button"
                     data-bs-toggle="collapse" data-bs-target="#failedPanel">
                 <?= $failed ?> Failed Row(s) — validation errors
             </button>
         </h2>
-        <div id="failedPanel" class="accordion-collapse collapse">
+        <div id="failedPanel" class="accordion-collapse show">
             <div class="accordion-body p-0">
                 <div class="table-responsive">
                     <table class="table table-sm table-striped mb-0">

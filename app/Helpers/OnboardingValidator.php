@@ -79,13 +79,11 @@ class OnboardingValidator
             $errors['class_id'] = 'Class is required.';
         }
 
-        // Admission Date
+        // Admission Date (future dates are allowed — students can be registered for upcoming terms)
         $admRaw = trim($data['admission_date'] ?? '');
         $admObj = \DateTime::createFromFormat('d/m/Y', $admRaw);
         if (!$admRaw || !$admObj || $admObj->format('d/m/Y') !== $admRaw) {
             $errors['admission_date'] = 'Admission Date must be in DD/MM/YYYY format.';
-        } elseif ($admObj > new \DateTime()) {
-            $errors['admission_date'] = 'Admission Date cannot be in the future.';
         }
 
         return $errors;

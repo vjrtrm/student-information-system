@@ -157,7 +157,8 @@ class SpreadsheetImport
         try {
             $spreadsheet = IOFactory::load($filePath);
             $sheet = $spreadsheet->getActiveSheet();
-            $data  = $sheet->toArray(null, true, true, false);
+            // formatData: false — raw values so we control date/number normalisation ourselves.
+            $data  = $sheet->toArray(null, true, false, false);
 
             if (empty($data)) {
                 return ['rows' => [], 'errors' => []];
@@ -165,9 +166,42 @@ class SpreadsheetImport
 
             // Normalise header row: trim, lowercase, spaces→underscore
             $rawHeaders = array_shift($data);
-            $headers = array_map(function (string $h): string {
+            $headers = array_map(function ($h): string {
                 return str_replace(' ', '_', strtolower(trim((string)$h)));
             }, $rawHeaders);
+
+            $aliases = [
+                'first_name'     => ['firstname', 'first_name'],
+                'last_name'      => ['lastname', 'last_name', 'surname'],
+                'dob'            => ['dob', 'date_of_birth_(dd/mm/yyyy)', 'date_of_birth'],
+                'mobile'         => ['mobile', 'mobile_number', 'phone'],
+                'gender'         => ['gender'],
+                'academic_year'  => ['academic_year', 'year'],
+                'class'          => ['class', 'class_name'],
+                'section'        => ['section_(optional)', 'section'],
+                'admission_date' => ['admission_date_(dd/mm/yyyy)', 'admission_date'],
+            ];
+
+            $missing = [];
+            foreach ($aliases as $canonical => $possible) {
+                $found = false;
+                foreach ($possible as $p) {
+                    if (in_array($p, $headers, true)) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found && $canonical !== 'section') {
+                    $missing[] = $canonical;
+                }
+            }
+
+            if (!empty($missing)) {
+                $errors[] = ['row' => 1, 'error' => 'Missing required columns: ' . implode(', ', $missing)];
+                return compact('rows', 'errors');
+            }
+
+            $dateFields = ['dob', 'admission_date'];
 
             $rowNum = 1; // header was row 1
             foreach ($data as $row) {
@@ -179,31 +213,34 @@ class SpreadsheetImport
                     continue;
                 }
 
-                $mapped = array_combine($headers, $row);
-
-                // Normalise common column aliases
-                $aliases = [
-                    'first_name'     => ['firstname', 'first_name'],
-                    'last_name'      => ['lastname', 'last_name', 'surname'],
-                    'dob'            => ['dob', 'date_of_birth_(dd/mm/yyyy)', 'date_of_birth'],
-                    'mobile'         => ['mobile', 'mobile_number', 'phone'],
-                    'gender'         => ['gender'],
-                    'academic_year'  => ['academic_year', 'year'],
-                    'class'          => ['class', 'class_name'],
-                    'section'        => ['section_(optional)', 'section'],
-                    'admission_date' => ['admission_date_(dd/mm/yyyy)', 'admission_date'],
-                ];
+                $mapped = @array_combine($headers, $row) ?: [];
 
                 $out = ['_row_number' => $rowNum];
                 foreach ($aliases as $canonical => $possible) {
+                    $out[$canonical] = '';
                     foreach ($possible as $p) {
-                        if (isset($mapped[$p]) && $mapped[$p] !== null && $mapped[$p] !== '') {
-                            $out[$canonical] = trim((string)$mapped[$p]);
+                        if (array_key_exists($p, $mapped) && trim((string)$mapped[$p]) !== '') {
+                            $raw = $mapped[$p];
+
+                            // Date fields: Excel stores dates as serial floats.
+                            // Convert to DD/MM/YYYY so the validator can parse them.
+                            if (in_array($canonical, $dateFields, true) && is_numeric($raw)) {
+                                try {
+                                    $dt = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject((float)$raw);
+                                    $raw = $dt->format('d/m/Y');
+                                } catch (\Throwable $ignored) {
+                                    $raw = (string)$raw;
+                                }
+                            }
+
+                            // Mobile: stored as a number in Excel — cast to plain integer string.
+                            if ($canonical === 'mobile' && is_numeric($raw)) {
+                                $raw = (string)(int)(float)$raw;
+                            }
+
+                            $out[$canonical] = trim((string)$raw);
                             break;
                         }
-                    }
-                    if (!isset($out[$canonical])) {
-                        $out[$canonical] = '';
                     }
                 }
 

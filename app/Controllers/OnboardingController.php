@@ -118,6 +118,7 @@ class OnboardingController extends Controller
         if ($ext !== 'xlsx' || !in_array($mime, [
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'application/zip',
+            'application/octet-stream',
         ], true)) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Only .xlsx files are accepted.'];
             $this->redirect('/onboarding/upload');
@@ -133,7 +134,18 @@ class OnboardingController extends Controller
         $allRows = $parsed['rows'];
         $parseErrors = $parsed['errors'];
 
-        if (empty($allRows) && empty($parseErrors)) {
+        if (!empty($parseErrors)) {
+            $firstError = $parseErrors[0];
+            $msg = 'Could not parse uploaded file. Please use the template and verify headers.';
+            if (!empty($firstError['error'])) {
+                $msg .= ' ' . $firstError['error'];
+            }
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => $msg];
+            $this->redirect('/onboarding/upload');
+            return;
+        }
+
+        if (empty($allRows)) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'The file contained no data rows.'];
             $this->redirect('/onboarding/upload');
             return;
