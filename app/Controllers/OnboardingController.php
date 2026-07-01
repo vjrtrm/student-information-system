@@ -86,7 +86,29 @@ class OnboardingController extends Controller
 
         $file = $_FILES['students_file'] ?? null;
         if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
-            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Please select a file to upload.'];
+            $message = 'Please select a file to upload.';
+            if ($file) {
+                switch ($file['error']) {
+                    case UPLOAD_ERR_INI_SIZE:
+                    case UPLOAD_ERR_FORM_SIZE:
+                        $message = sprintf(
+                            'Selected file is too large. Server upload limits are upload_max_filesize=%s and post_max_size=%s.',
+                            ini_get('upload_max_filesize'),
+                            ini_get('post_max_size')
+                        );
+                        break;
+                    case UPLOAD_ERR_PARTIAL:
+                        $message = 'The file upload was interrupted. Please try again.';
+                        break;
+                    case UPLOAD_ERR_NO_FILE:
+                        $message = 'Please select a file to upload.';
+                        break;
+                    default:
+                        $message = 'File upload failed. Please try again.';
+                        break;
+                }
+            }
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => $message];
             $this->redirect('/onboarding/upload');
             return;
         }
